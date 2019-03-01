@@ -1,0 +1,4 @@
+/node_modules
+
+# Para compilar la carpeta dist usar  el comando npm run build
+/dist
