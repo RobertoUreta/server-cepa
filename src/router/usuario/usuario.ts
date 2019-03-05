@@ -58,6 +58,7 @@ usuario.get('/rol_usuario', (req: Request, res: Response) => {
                 error: err
             });
         } else {
+            console.log(roles)
             res.json({
                 ok: true,
                 roles
@@ -67,9 +68,17 @@ usuario.get('/rol_usuario', (req: Request, res: Response) => {
 });
 usuario.post('/insertar_usuario', (req:Request, res:Response) => {
     let obj = req.body;
+    if (obj.supervisorID === "") {
+        console.log("if")
+        obj.supervisorID = null;
+    }
+    if(obj.horasSemanales === ""){
+        obj.horasSemanales = 0
+    }
     console.log(obj);
     let estado = 1;
-    let query = `INSERT INTO usuario(nombre,apellido_paterno,apellido_materno,rut,genero,username,password,telefono_trabajo,telefono_movil,correo,horas_semanales,nombre_contacto_emergencia,telefono_contacto_emergencia,estado,ref_rol,ref_supervisor) VALUES('${obj.nombre}','${obj.apellidoPaterno}','${obj.apellidoMaterno}','${obj.rut}','${obj.genero}','${obj.usuario}','${obj.password}','${obj.telefonoTrabajo}','${obj.telefonoMovil}','${obj.correo}',${obj.horasSemanales},'${obj.nombreContactoEmergencia}','${obj.telefonoContactoEmergencia}','${estado}',${obj.rolID},${obj.supervisorID});`;
+    let query = `INSERT INTO usuario(nombre,apellido_paterno,apellido_materno,rut,genero,username,password,telefono_trabajo,telefono_movil,correo,horas_semanales,nombre_contacto_emergencia,telefono_contacto_emergencia,estado,ref_rol,ref_supervisor) VALUES('${obj.nombre}','${obj.apellidoPaterno}','${obj.apellidoMaterno}','${obj.rut}','${obj.genero}','${obj.usuario}','${obj.password}','${obj.telefonoTrabajo}','${obj.telefonoMovil}','${obj.correo}',${obj.horasSemanales},'${obj.nombreContactoEmergencia}','${obj.telefonoContactoEmergencia}',b'${estado}',${obj.rolID},${obj.supervisorID});`;
+    console.log(query)
     MySQL.ejecutarQuery(query, (err: any, respuesta: Object[]) => {
         if (err) {
             return res.status(500).json({
