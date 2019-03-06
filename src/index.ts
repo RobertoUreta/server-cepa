@@ -5,6 +5,7 @@ import usuario from './router/usuario/usuario'
 import express from 'express'
 import session from 'express-session'
 import ingreso from './router/ingreso/ingreso'
+import paciente from './router/paciente/paciente'
 
 const server = Server.init(3001);
 server.app.use(express.urlencoded({ extended: true }));
@@ -13,7 +14,7 @@ server.app.use(session({secret:'123456'}));
 server.app.use(router);
 server.app.use(usuario);
 server.app.use(ingreso)
-
+server.app.use(paciente)
 server.start(()=>{
     console.log('Servidor corriendo en el puerto 3001');
 });
