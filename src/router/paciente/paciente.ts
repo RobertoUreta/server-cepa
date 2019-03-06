@@ -1,8 +1,6 @@
 import { Router, Request, Response } from "express";
 import MySQL from '../../mysql/mysql';
-const cors = require('cors');
 const paciente = Router();
-paciente.use(cors({ origin: 'http://localhost:3000' }));
 
 paciente.get('/listaPacientes', (req: Request, res: Response) => {
     const query = `

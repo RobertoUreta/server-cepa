@@ -1,8 +1,6 @@
 import { Router, Request, Response } from "express";
 import MySQL from '../../mysql/mysql';
-const cors = require('cors');
 const ingreso = Router();
-ingreso.use(cors({ origin: 'http://localhost:3000' }));
 
 ingreso.post('/insertarPaciente', (req: Request, res: Response) => {
 
