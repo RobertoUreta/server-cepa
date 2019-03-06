@@ -11,7 +11,8 @@ export default class MySQL{
             host     : 'localhost',
             user     : 'node_user',
             password : '123456',
-            database : 'db_cepa'
+            database : 'db_cepa',
+            multipleStatements: true
           });
 
           this.conectarDB();
@@ -21,7 +22,6 @@ export default class MySQL{
     public static get instance(){
         return this._instance || (this._instance = new this() );
     }
-
     public static ejecutarQuery(query: string, callback: Function){
         this.instance.conexion.query(query, (err,results:Object[], fields)=>{
             if(err){

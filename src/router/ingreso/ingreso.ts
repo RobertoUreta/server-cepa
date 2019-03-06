@@ -4,33 +4,52 @@ const cors = require('cors');
 const ingreso = Router();
 ingreso.use(cors({ origin: 'http://localhost:3000' }));
 
-ingreso.post('/ingreso', (req: Request, res: Response) => {
+ingreso.post('/insertarPaciente', (req: Request, res: Response) => {
 
     var body = req.body.data
-    console.log(body)
-    const insertPaciente = "INSERT INTO paciente(nombre, apellido_paterno, apellido_materno, rut, fecha_nacimiento" +
-                            ", telefono_movil, telefono_fijo, correo, establecimiento_educacional, tipo_establecimiento"+
-                            ", prevision,ocupacion, relacion_contractual, tipo_paciente, valor_sesion, ref_adulto_contacto"+
-                            ", ref_datos_adicionales, ref_datos_sociodemograficos, ref_entrevista_isl) "
-    const valuesPaciente = `VALUES("${body.nombre}", "${body.apellidoPaterno}", "${body.apellidoMaterno}", "${body.rut}"` +
-                            `,"${body.fechaNacimiento}", "${body.telefonoMovil}", "${body.telefonoFijo}","${body.correo}","${body.establecimientoEducacional}"`+
-                            `,"${body.tipoEstablecimiento}", "${body.prevision}", "${body.ocupacion}",  "${body.relacionContractual}",`+
-                            ` "${body.tipoPaciente}", "${body.valorSesion}",0,0,0,0);`
-    const queryPaciente = insertPaciente + valuesPaciente
+    var id = req.body.id
     
-    MySQL.ejecutarQuery(queryPaciente, (err: any) => {
+    console.log(body.nacimiento)
+    
+    const insertDatosGenerales= `INSERT INTO adulto_contacto (id_adulto_contacto,nombre,apellido_paterno,apellido_materno,parentezco,` +
+                                `telefono_movil) VALUES (${id},"default","default","default","default","default");`
+    
+    const insertDatosAdicionales= `INSERT INTO datos_adicionales (id_datos_adicionales,estado,etapa,tipo_ingreso,institucion)`+
+                                `VALUES (${id},0,"default","default","default"); `
+    
+    const insertDatosSocioDemo= `INSERT INTO datos_sociodemograficos (id_datos_sociodemograficos,pais,region,provincia,ciudad,direccion,ingreso_familiar,`+
+            	                `tipo_familia,estado_civil) VALUES(${id},"default","default","default","default","default",0,"default","default"); `
+
+    const insertPaciente = `INSERT INTO paciente (nombre, apellido_paterno, apellido_materno, rut, fecha_nacimiento` +
+                            `, telefono_movil, telefono_fijo, correo, establecimiento_educacional, tipo_establecimiento`+
+                            `, prevision,ocupacion, relacion_contractual, tipo_paciente, valor_sesion, ref_adulto_contacto `+
+                            `, ref_datos_adicionales, ref_datos_sociodemograficos) `
+    const valuesPaciente = `VALUES("${body.nombre}", "${body.apellidoPaterno}", "${body.apellidoMaterno}", "${body.rut}"` +
+                            `,"${body.nacimiento}", "${body.telefonoMovil}", "${body.telefonoFijo}","${body.correo}","${body.establecimientoEducacional}"`+
+                            `,"${body.tipoEstablecimiento}", "${body.prevision}", "${body.ocupacion}",  "${body.relacionContractual}",`+
+                            ` "${body.tipoPaciente}", "${body.valorSesion}",${id},${id},${id});`
+    
+    const insertIngreso = `INSERT INTO ingreso (fecha_ingreso,es_reingreso,ref_paciente) VALUES(${body.fechaIngreso}, b'0',${id}); `
+    const query = insertDatosGenerales  + insertDatosAdicionales + insertDatosSocioDemo
+    const queryPaciente =  query + insertPaciente + valuesPaciente  + insertIngreso
+    console.log(queryPaciente)
+
+   
+    
+    MySQL.ejecutarQuery(queryPaciente, (err: any, paciente: Object[]) => {
+        console.log(paciente);
         if (err) {
             res.status(400).json({
                 ok: false,
                 error: err
             });
         } else {
+            console.log("Se insertó correctamente en la tabla de paciente")
             res.json({
                 ok: true,
             });
         }
     });
-    console.log(queryPaciente)
 })
 
 ingreso.get('/obtener_id_paciente', (req: Request, res: Response) => {
@@ -54,5 +73,6 @@ ingreso.get('/obtener_id_paciente', (req: Request, res: Response) => {
         }
     });
 });
+
 
 export default ingreso;
