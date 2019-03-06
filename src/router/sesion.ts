@@ -1,30 +1,81 @@
-import { Router, Request, Response } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import MySQL from '../mysql/mysql';
-const cors = require('cors');
 const sesion = Router();
-sesion.use(cors({ origin: 'http://localhost:3000' }));
+
+sesion.get('/logout', function (req, res) {
+    // destroy the user's session to log them out
+    // will be re-created next request
+    req.session!.destroy(function () {
+        return res.json({
+            ok: true,
+            mensaje: 'logout correcto'
+        })
+    });
+});
+
+function restrict(req:Request, res:Response, next:NextFunction) {
+    if (req.session!.user) {
+        console.log(req.session!.user);
+      next();
+    } else {
+      req.session!.error = 'Access denied!';
+      return res.json({
+          ok:false,
+          mensaje: 'restrict failed'
+      })
+    }
+  }
+  
+  sesion.get('/auth', restrict, function(req, res){
+    res.json({
+        ok: true,
+        mensaje: 'Auth Correcto'
+    })
+  });
 
 
-
-sesion.get('/identificacion', (req: Request, res: Response) => {
-    let pw = req.body.pw;
+sesion.post('/login', (req: Request, res: Response) => {
+    console.log('--login--');
+    console.log(req.body);
+    let pw = req.body.password;
+    if (!req.body.usuario || !req.body.password) {
+        res.json({
+            ok: false,
+            mensaje: 'Login failed'
+        })
+    }
     const query = `
-        SELECT username
+        SELECT id_usuario, username, password
         FROM usuario
-        WHERE username=${req.body.usuario} AND password=${req.body.password}
+        WHERE username='${req.body.usuario}'
     `;
     MySQL.ejecutarQuery(query, (err: any, sesion: Object[]) => {
         if (err) {
-            res.status(400).json({
+            res.json({
                 ok: false,
                 error: err
             });
         } else {
-            res.json({
-                ok: true,
-                sesion
-            });
-            console.log(sesion);
+            let ses = JSON.parse(JSON.stringify(sesion[0]));
+            if (pw === ses.password) {
+                console.log('--MATCH--');
+                req.session!.regenerate(function () {
+                    req.session!.user = sesion[0]
+                    return res.json({
+                        ok: true,
+                        usuario: sesion[0]
+                    });
+                });
+            }
+            else {
+                console.log('--PASS INCORRECTA--');
+                return res.json({
+                    ok: false,
+                    mensaje: 'Contraseña incorrecta :('
+                })
+            }
         }
     });
 });
+
+export default sesion;

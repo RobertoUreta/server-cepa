@@ -1,9 +1,6 @@
 import { Router, Request, Response } from 'express';
 import MySQL from '../../mysql/mysql';
-const cors = require('cors');
 const usuario = Router();
-usuario.use(cors({ origin: 'http://localhost:3000' }));
-
 usuario.get('/usuario', (req: Request, res: Response) => {
     const query = `
         SELECT id_usuario,nombre,apellido_paterno,apellido_materno
@@ -47,6 +44,7 @@ usuario.get('/listaUsuario', (req: Request, res: Response) => {
     });
 });
 usuario.get('/rol_usuario', (req: Request, res: Response) => {
+    console.log();
     const query = `
         SELECT id_rol_usuario, nombre_rol
         FROM rol_usuario
