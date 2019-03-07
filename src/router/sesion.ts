@@ -5,6 +5,7 @@ const sesion = Router();
 sesion.get('/logout', function (req, res) {
     // destroy the user's session to log them out
     // will be re-created next request
+    
     req.session!.destroy(function () {
         return res.json({
             ok: true,
@@ -26,6 +27,9 @@ export function restrict(req:Request, res:Response, next:NextFunction) {
     }
   }
   
+
+
+
   sesion.get('/auth', restrict, function(req, res){
     res.json({
         ok: true,
@@ -36,7 +40,7 @@ export function restrict(req:Request, res:Response, next:NextFunction) {
 
 sesion.post('/login', (req: Request, res: Response) => {
     console.log('--login--');
-    console.log(req.body);
+    //console.log(req.body);
     let pw = req.body.password;
     if (!req.body.usuario || !req.body.password) {
         res.json({

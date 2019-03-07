@@ -1,7 +1,8 @@
 import { Router, Request, Response } from 'express';
 import MySQL from '../../mysql/mysql';
+import { restrict } from '../sesion';
 const usuario = Router();
-usuario.get('/usuario', (req: Request, res: Response) => {
+usuario.get('/usuario',restrict, (req: Request, res: Response) => {
     const query = `
         SELECT id_usuario,nombre,apellido_paterno,apellido_materno
         FROM usuario
@@ -13,7 +14,7 @@ usuario.get('/usuario', (req: Request, res: Response) => {
                 error: err
             });
         } else {
-            console.log(usuarios);
+            //console.log(usuarios);
             res.json({
                 ok: true,
                 usuarios
@@ -44,7 +45,7 @@ usuario.get('/datosUsuario', (req: Request, res: Response) => {
         }
     });
 })
-usuario.get('/listaUsuario', (req: Request, res: Response) => {
+usuario.get('/listaUsuario', restrict,(req: Request, res: Response) => {
     const query = `
         SELECT id_usuario,nombre,apellido_paterno,apellido_materno,nombre_rol
         FROM usuario,rol_usuario
@@ -65,7 +66,7 @@ usuario.get('/listaUsuario', (req: Request, res: Response) => {
         }
     });
 });
-usuario.get('/rol_usuario', (req: Request, res: Response) => {
+usuario.get('/rol_usuario',restrict, (req: Request, res: Response) => {
     console.log();
     const query = `
         SELECT id_rol_usuario, nombre_rol
@@ -86,7 +87,7 @@ usuario.get('/rol_usuario', (req: Request, res: Response) => {
         }
     });
 });
-usuario.post('/insertar_usuario', (req: Request, res: Response) => {
+usuario.post('/insertar_usuario',restrict, (req:Request, res:Response) => {
     let obj = req.body;
     if (obj.supervisorID === "") {
         console.log("if")
