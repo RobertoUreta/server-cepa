@@ -1,6 +1,5 @@
 
 import Server from './server/server'
-import router from './router/router'
 import usuario from './router/usuario/usuario'
 import express from 'express'
 import session from 'express-session'
@@ -19,7 +18,6 @@ server.app.use(session({
     secret:'123456',
     saveUninitialized:true,
     resave:true}));
-server.app.use(router);
 server.app.use(usuario);
 server.app.use(ingreso);
 server.app.use(paciente);

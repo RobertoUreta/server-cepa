@@ -1,8 +1,9 @@
 import { Router, Request, Response } from "express";
 import MySQL from '../../mysql/mysql';
+import { restrict } from "../sesion";
 const ingreso = Router();
 
-ingreso.post('/insertarPaciente', (req: Request, res: Response) => {
+ingreso.post('/insertarPaciente', restrict,(req: Request, res: Response) => {
 
     var body = req.body.data
     var id = req.body.id
@@ -50,7 +51,7 @@ ingreso.post('/insertarPaciente', (req: Request, res: Response) => {
     });
 })
 
-ingreso.put('/update_datosadicionales', (req: Request, res: Response) => {
+ingreso.put('/update_datosadicionales', restrict,(req: Request, res: Response) => {
 
     var body = req.body.data;
     var id = req.body.id;
@@ -76,7 +77,7 @@ ingreso.put('/update_datosadicionales', (req: Request, res: Response) => {
     });
 })
 
-ingreso.put('/update_datossociodemo', (req: Request, res: Response) => {
+ingreso.put('/update_datossociodemo', restrict ,(req: Request, res: Response) => {
 
     var body = req.body.data;
     var id = req.body.id;
@@ -104,7 +105,7 @@ ingreso.put('/update_datossociodemo', (req: Request, res: Response) => {
     });
 })
 
-ingreso.put('/update_adultocontacto', (req: Request, res: Response) => {
+ingreso.put('/update_adultocontacto', restrict ,(req: Request, res: Response) => {
 
     var body = req.body.data;
     var id = req.body.id;
@@ -131,7 +132,7 @@ ingreso.put('/update_adultocontacto', (req: Request, res: Response) => {
 })
 
 
-ingreso.get('/obtener_id_paciente', (req: Request, res: Response) => {
+ingreso.get('/obtener_id_paciente', restrict,(req: Request, res: Response) => {
     const query = `
         SELECT MAX(id_paciente) AS id
         FROM paciente 

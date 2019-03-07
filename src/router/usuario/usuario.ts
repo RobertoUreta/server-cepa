@@ -22,6 +22,28 @@ usuario.get('/usuario', (req: Request, res: Response) => {
     });
 });
 
+usuario.get('/datosUsuario', (req: Request, res: Response) => {
+    var id = req.query.idUser;
+    console.log("datosUsuario", req.query)
+    const query = `SELECT nombre,apellido_paterno,apellido_materno
+                    FROM usuario
+                    WHERE id_usuario=${id}`
+
+    MySQL.ejecutarQuery(query, (err: any, usuarios: Object[]) => {
+        if (err) {
+            res.status(400).json({
+                ok: false,
+                error: err
+            });
+        } else {
+            console.log(usuarios);
+            res.json({
+                ok: true,
+                usuarios
+            });
+        }
+    });
+})
 usuario.get('/listaUsuario', (req: Request, res: Response) => {
     const query = `
         SELECT id_usuario,nombre,apellido_paterno,apellido_materno,nombre_rol
@@ -64,13 +86,13 @@ usuario.get('/rol_usuario', (req: Request, res: Response) => {
         }
     });
 });
-usuario.post('/insertar_usuario', (req:Request, res:Response) => {
+usuario.post('/insertar_usuario', (req: Request, res: Response) => {
     let obj = req.body;
     if (obj.supervisorID === "") {
         console.log("if")
         obj.supervisorID = null;
     }
-    if(obj.horasSemanales === ""){
+    if (obj.horasSemanales === "") {
         obj.horasSemanales = 0
     }
     console.log(obj);

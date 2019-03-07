@@ -1,8 +1,9 @@
 import { Router, Request, Response } from "express";
 import MySQL from '../../mysql/mysql';
+import restrict from '../sesion'
 const paciente = Router();
 
-paciente.get('/listaPacientes', (req: Request, res: Response) => {
+paciente.get('/listaPacientes', restrict,(req: Request, res: Response) => {
     const query = `
         SELECT nombre,apellido_paterno,apellido_materno,rut
         FROM paciente
