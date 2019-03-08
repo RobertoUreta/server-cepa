@@ -25,4 +25,27 @@ paciente.get('/listaPacientes', restrict,(req: Request, res: Response) => {
     });
 });
 
+paciente.get('/busquedaPacientes', restrict,(req: Request, res: Response) => {
+    console.log(req)
+    const query = `
+        SELECT nombre,apellido_paterno,apellido_materno,rut
+        FROM paciente
+        WHERE id_paciente != 1 AND CONCAT(nombre,' ',apellido_paterno) LIKE '%${req.query.search}%'
+    `;
+    MySQL.ejecutarQuery(query, (err: any, pacientes: Object[]) => {
+        if (err) {
+            res.status(400).json({
+                ok: false,
+                error: err
+            });
+        } else {
+            console.log(pacientes);
+            res.json({
+                ok: true,
+                pacientes
+            });
+        }
+    });
+});
+
 export default paciente;
