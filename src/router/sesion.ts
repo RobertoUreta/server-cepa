@@ -18,6 +18,8 @@ sesion.get('/logout', function (req, res) {
 
 export function restrict(req: Request, res: Response, next: NextFunction) {
     if (req.session!.user) {
+        console.log("ESTE ES EL REQ.SESSION");
+        console.log(req.sessionID);
         console.log(req.session!.user);
         next();
     } else {
@@ -51,9 +53,9 @@ sesion.post('/login', (req: Request, res: Response) => {
         })
     }
     const query = `
-        SELECT id_usuario, username, password, salt
-        FROM usuario
-        WHERE username='${req.body.usuario}'
+        SELECT id_usuario, username, password, salt, nombre_rol
+        FROM usuario,rol_usuario
+        WHERE username='${req.body.usuario}' AND ref_rol=id_rol_usuario
     `;
     MySQL.ejecutarQuery(query, (err: any, sesion: Object[]) => {
         if (err) {
