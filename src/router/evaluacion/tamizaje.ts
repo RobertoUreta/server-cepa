@@ -16,18 +16,16 @@ function obtenerIdIngreso(idPaciente: Number, callback: Function) {
     });
 }
 
+tamizaje.put('/update_tamizaje', restrict, (req: Request, res: Response) => {
 
-tamizaje.post('/insertar_tamizaje', restrict, (req: Request, res: Response) => {
-    let obj = req.body.aux;
+    let body = req.body.data;
     let idPaciente = req.body.idPaciente;
     let idUsuario = req.body.idUsuario;
-    console.log(obj);
+
     obtenerIdIngreso(idPaciente, (err: any, respuesta: Object[]) => {
         let idIngreso = JSON.parse(JSON.stringify(respuesta)).id_ingreso;
-        let queryTamizaje = ` INSERT INTO tamizaje (id_tamizaje, nombre_solicitante, fecha_solicitud, horario_disponible, nivel_urgencia, pregunta_sintomatologia,pregunta_malestar,pregunta_observaciones,ref_profesional) VALUES (${idIngreso}, '${obj.nombreSolicitante}', '${obj.fechaSolicitud}', '${obj.horarioDisponible}', '${obj.nivelUrgencia}', '${obj.preguntaSintomatologia}', '${obj.preguntaMalestar}', '${obj.preguntaObservaciones}', '${idUsuario}');`
-        let queryUpdate = ` UPDATE ingreso SET ref_tamizaje=${idIngreso} WHERE id_ingreso=${idIngreso};`
-        let query = queryTamizaje + queryUpdate;
-        console.log(query)
+        let query = ` UPDATE tamizaje SET nombre_solicitante='${body.nombreSolicitante}', fecha_solicitud='${body.fechaSolicitud}',horario_disponible='${body.horarioDisponible}',nivel_urgencia='${body.nivelUrgencia}',pregunta_sintomatologia='${body.preguntaSintomatologia}',pregunta_malestar='${body.preguntaMalestar}',pregunta_observaciones='${body.preguntaObservaciones}',ref_profesional=${idUsuario} WHERE id_tamizaje=${idIngreso};`
+        console.log('Query:   ', query)
         MySQL.ejecutarQuery(query, (err: any, respuesta: Object[]) => {
             if (err) {
                 return res.status(500).json({
@@ -41,5 +39,33 @@ tamizaje.post('/insertar_tamizaje', restrict, (req: Request, res: Response) => {
             });
         });
     });
-});
+})
+
+tamizaje.get('/obtener_tamizaje', restrict, (req: Request, res: Response) => {
+    let idPaciente = req.query.idPaciente;
+
+    obtenerIdIngreso(idPaciente, (err: any, respuesta: Object[]) => {
+        let idIngreso = JSON.parse(JSON.stringify(respuesta)).id_ingreso;
+        const query = `
+                    SELECT * 
+                    FROM tamizaje
+                    WHERE id_tamizaje = ${idIngreso}
+                    `
+        MySQL.ejecutarQuery(query, (err: any, respuesta: Object[]) => {
+            if (err) {
+                res.status(400).json({
+                    ok: false,
+                    error: err
+                });
+            } else {
+                res.json({
+                    ok: true,
+                    respuesta
+                });
+            }
+        });
+    });
+
+
+})
 export default tamizaje;

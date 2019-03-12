@@ -19,7 +19,7 @@ ingreso.post('/insertarPaciente', restrict, (req: Request, res: Response) => {
 
     var body = req.body.data
     var id = req.body.id
-    let userId = req.body.userId
+    let userId = req.body.loggedUser
 
 
     const insertDatosGenerales = `INSERT INTO adulto_contacto (id_adulto_contacto,nombre,apellido_paterno,apellido_materno,parentezco,` +
@@ -57,7 +57,6 @@ ingreso.post('/insertarPaciente', restrict, (req: Request, res: Response) => {
             obtenerIdIngreso(id, (err: any, resp:Object[]) => {
                 let aux =JSON.parse(JSON.stringify(resp))
                 let idIngreso = aux.resp.id;
-                let id = aux.resp.id;
                 let queryTamizaje = ` INSERT INTO tamizaje (id_tamizaje, nombre_solicitante, fecha_solicitud, horario_disponible, nivel_urgencia, pregunta_sintomatologia,pregunta_malestar,pregunta_observaciones,ref_profesional) VALUES (${idIngreso}, 'default', 'default', 'default', 'default', 'default', 'default', 'default', ${userId});`
                 let queryUpdate = ` UPDATE ingreso SET ref_tamizaje=${idIngreso} WHERE id_ingreso=${idIngreso};`
                 let query = queryTamizaje + queryUpdate;
