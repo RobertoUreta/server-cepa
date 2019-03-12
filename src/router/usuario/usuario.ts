@@ -1,8 +1,13 @@
 import { Router, Request, Response } from 'express';
 import MySQL from '../../mysql/mysql';
 import { restrict } from '../sesion';
+const bkfd2Password = require('pbkdf2-password');
 const usuario = Router();
-usuario.get('/usuario',restrict, (req: Request, res: Response) => {
+const hasher = bkfd2Password();
+
+
+
+usuario.get('/usuario', restrict, (req: Request, res: Response) => {
     const query = `
         SELECT id_usuario,nombre,apellido_paterno,apellido_materno
         FROM usuario
@@ -45,7 +50,7 @@ usuario.get('/datosUsuario', (req: Request, res: Response) => {
         }
     });
 })
-usuario.get('/listaUsuario', restrict,(req: Request, res: Response) => {
+usuario.get('/listaUsuario', restrict, (req: Request, res: Response) => {
     const query = `
         SELECT id_usuario,nombre,apellido_paterno,apellido_materno,nombre_rol
         FROM usuario,rol_usuario
@@ -66,7 +71,7 @@ usuario.get('/listaUsuario', restrict,(req: Request, res: Response) => {
         }
     });
 });
-usuario.get('/rol_usuario',restrict, (req: Request, res: Response) => {
+usuario.get('/rol_usuario', restrict, (req: Request, res: Response) => {
     console.log();
     const query = `
         SELECT id_rol_usuario, nombre_rol
@@ -87,7 +92,10 @@ usuario.get('/rol_usuario',restrict, (req: Request, res: Response) => {
         }
     });
 });
-usuario.post('/insertar_usuario',restrict, (req:Request, res:Response) => {
+
+
+
+usuario.post('/insertar_usuario', restrict, (req: Request, res: Response) => {
     let obj = req.body;
     if (obj.supervisorID === "") {
         console.log("if")
@@ -98,19 +106,28 @@ usuario.post('/insertar_usuario',restrict, (req:Request, res:Response) => {
     }
     console.log(obj);
     let estado = 1;
-    let query = `INSERT INTO usuario(nombre,apellido_paterno,apellido_materno,rut,genero,username,password,telefono_trabajo,telefono_movil,correo,horas_semanales,nombre_contacto_emergencia,telefono_contacto_emergencia,estado,ref_rol,ref_supervisor) VALUES('${obj.nombre}','${obj.apellidoPaterno}','${obj.apellidoMaterno}','${obj.rut}','${obj.genero}','${obj.usuario}','${obj.password}','${obj.telefonoTrabajo}','${obj.telefonoMovil}','${obj.correo}',${obj.horasSemanales},'${obj.nombreContactoEmergencia}','${obj.telefonoContactoEmergencia}',b'${estado}',${obj.rolID},${obj.supervisorID});`;
-    console.log(query)
-    MySQL.ejecutarQuery(query, (err: any, respuesta: Object[]) => {
-        if (err) {
-            return res.status(500).json({
-                ok: false,
-                err
+    let opts = {
+        password: obj.password
+    }
+    hasher(opts, function (err: Error, pass: String, salt: string, hash: string) {
+        if (err) throw err;
+        // store the salt & hash in the "db"
+        let query = `INSERT INTO usuario(nombre,apellido_paterno,apellido_materno,rut,genero,username,password,salt,telefono_trabajo,telefono_movil,correo,horas_semanales,nombre_contacto_emergencia,telefono_contacto_emergencia,estado,ref_rol,ref_supervisor) VALUES('${obj.nombre}','${obj.apellidoPaterno}','${obj.apellidoMaterno}','${obj.rut}','${obj.genero}','${obj.usuario}','${hash}','${salt}','${obj.telefonoTrabajo}','${obj.telefonoMovil}','${obj.correo}',${obj.horasSemanales},'${obj.nombreContactoEmergencia}','${obj.telefonoContactoEmergencia}',b'${estado}',${obj.rolID},${obj.supervisorID});`;
+        console.log(query)
+        MySQL.ejecutarQuery(query, (err: any, respuesta: Object[]) => {
+            if (err) {
+                return res.status(500).json({
+                    ok: false,
+                    err
+                });
+            }
+            res.status(201).json({
+                ok: true,
+                respuesta
             });
-        }
-        res.status(201).json({
-            ok: true,
-            respuesta
         });
     });
+
+
 });
 export default usuario;
