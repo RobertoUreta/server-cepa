@@ -3,10 +3,23 @@ import MySQL from '../../mysql/mysql';
 import { restrict } from "../sesion";
 const ingreso = Router();
 
+function obtenerIdIngreso(idPaciente: Number, callback: Function) {
+    let query = `SELECT MAX(id_ingreso) AS id FROM ingreso WHERE ref_paciente=${idPaciente};`
+    MySQL.ejecutarQuery(query, (err: any, respuesta: Object[]) => {
+        if (err) {
+            return callback(err);
+        }
+        console.log(respuesta);
+        console.log(idPaciente);
+        return callback(null, {resp: respuesta[0],id:idPaciente});
+    });
+}
+
 ingreso.post('/insertarPaciente', restrict, (req: Request, res: Response) => {
 
     var body = req.body.data
     var id = req.body.id
+    let userId = req.body.userId
 
 
     const insertDatosGenerales = `INSERT INTO adulto_contacto (id_adulto_contacto,nombre,apellido_paterno,apellido_materno,parentezco,` +
@@ -28,6 +41,7 @@ ingreso.post('/insertarPaciente', restrict, (req: Request, res: Response) => {
         ` "default", "default",${id},${id},${id});`
 
     const insertIngreso = `INSERT INTO ingreso (fecha_ingreso,es_reingreso,ref_paciente) VALUES("${body.fechaIngreso}", b'0',${id}); `
+
     const query = insertDatosGenerales + insertDatosAdicionales + insertDatosSocioDemo
     const queryPaciente = query + insertPaciente + valuesPaciente + insertIngreso
 
@@ -40,10 +54,27 @@ ingreso.post('/insertarPaciente', restrict, (req: Request, res: Response) => {
                 error: err
             });
         } else {
-            console.log("Se insertó correctamente en la tabla de paciente")
-            res.json({
-                ok: true,
-            });
+            obtenerIdIngreso(id, (err: any, resp:Object[]) => {
+                let aux =JSON.parse(JSON.stringify(resp))
+                let idIngreso = aux.resp.id;
+                let id = aux.resp.id;
+                let queryTamizaje = ` INSERT INTO tamizaje (id_tamizaje, nombre_solicitante, fecha_solicitud, horario_disponible, nivel_urgencia, pregunta_sintomatologia,pregunta_malestar,pregunta_observaciones,ref_profesional) VALUES (${idIngreso}, 'default', 'default', 'default', 'default', 'default', 'default', 'default', ${userId});`
+                let queryUpdate = ` UPDATE ingreso SET ref_tamizaje=${idIngreso} WHERE id_ingreso=${idIngreso};`
+                let query = queryTamizaje + queryUpdate;
+                console.log(query)
+                MySQL.ejecutarQuery(query, (err: any, respuesta: Object[]) => {
+                    if (err) {
+                        return res.status(500).json({
+                            ok: false,
+                            err
+                        });
+                    }
+                    console.log("Se insertó correctamente en la tabla de paciente")
+                    res.json({
+                        ok: true,
+                    });
+                });
+            })
         }
     });
 })

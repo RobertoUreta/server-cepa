@@ -18,9 +18,9 @@ sesion.get('/logout', function (req, res) {
 
 export function restrict(req: Request, res: Response, next: NextFunction) {
     if (req.session!.user) {
-        console.log("ESTE ES EL REQ.SESSION");
-        console.log(req.sessionID);
-        console.log(req.session!.user);
+        //console.log("ESTE ES EL REQ.SESSION");
+        //console.log(req.sessionID);
+        //console.log(req.session!.user);
         next();
     } else {
         req.session!.error = 'Access denied!';

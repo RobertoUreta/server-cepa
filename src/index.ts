@@ -6,6 +6,7 @@ import session from 'express-session'
 import ingreso from './router/ingreso/ingreso'
 import paciente from './router/paciente/paciente'
 import sesion from './router/sesion'
+import tamizaje from './router/evaluacion/tamizaje';
 const cors = require('cors')
 const server = Server.init(3001);
 server.app.use(express.urlencoded({ extended: true }));
@@ -22,6 +23,7 @@ server.app.use(usuario);
 server.app.use(ingreso);
 server.app.use(paciente);
 server.app.use(sesion);
+server.app.use(tamizaje);
 server.start(()=>{
     console.log('Servidor corriendo en el puerto 3001');
 });
