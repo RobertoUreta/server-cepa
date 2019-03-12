@@ -62,7 +62,6 @@ paciente.get('/datosPaciente', restrict, (req: Request,res: Response) => {
                 error: err
             });
         } else {
-            console.log(paciente);
             res.json({
                 ok: true,
                 paciente
