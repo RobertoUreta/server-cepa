@@ -57,9 +57,15 @@ ingreso.post('/insertarPaciente', restrict, (req: Request, res: Response) => {
             obtenerIdIngreso(id, (err: any, resp:Object[]) => {
                 let aux =JSON.parse(JSON.stringify(resp))
                 let idIngreso = aux.resp.id;
-                let queryTamizaje = ` INSERT INTO tamizaje (id_tamizaje, nombre_solicitante, fecha_solicitud, horario_disponible, nivel_urgencia, pregunta_sintomatologia,pregunta_malestar,pregunta_observaciones,ref_profesional) VALUES (${idIngreso}, 'default', 'default', 'default', 'default', 'default', 'default', 'default', ${userId});`
-                let queryUpdate = ` UPDATE ingreso SET ref_tamizaje=${idIngreso} WHERE id_ingreso=${idIngreso};`
-                let query = queryTamizaje + queryUpdate;
+                let queryTamizaje = ` INSERT INTO tamizaje (id_tamizaje, nombre_solicitante, fecha_solicitud, horario_disponible, nivel_urgencia, pregunta_sintomatologia,pregunta_malestar,pregunta_observaciones,ref_profesional) 
+                                        VALUES (${idIngreso}, 'default', 'default', 'default', 'default', 'default', 'default', 'default', ${userId});`
+                let queryEvIngreso = ` INSERT INTO entrevista_ingreso(id_entrevista_ingreso, fecha_entrevista, grupo_familiar, observaciones, solicitante, motivo_consulta_paciente, motivo_consulta_institucion, motivo_consulta_familia, soluciones_intensadas_resultados, principal_sintomatologia, tratamiento_previo, consumo_sustancias, impresiones_clinicas, observaciones_finales, ref_profesional)
+                                        VALUES (${idIngreso},'0000-00-00','default','default','default','default','default','default','default','default','default','default','default','default',${userId});`
+                                        let queryEvPsicologica = ` INSERT INTO entrevista_psicologica(id_entrevista_psicologica, fecha_entrevista, genograma, ecomapa, recursos_individuales_familiares, impresiones_clinicas, relaciones_interpersonales, relacion_terapeuta, diagnostico_nosologico, diagnostico_descriptivo, motivo_consulta_coconstruido, observaciones) 
+                                                                    VALUES (${idIngreso},'0000-00-00','default','default','default','default','default','default','default','default','default','default');`
+                                        let queryUpdate = ` UPDATE ingreso SET ref_tamizaje=${idIngreso},ref_entrevista_ingreso=${idIngreso},ref_entrevista_psicologica=${idIngreso} WHERE id_ingreso=${idIngreso};`
+               
+                let query = queryTamizaje + queryEvIngreso + queryEvPsicologica + queryUpdate;
                 console.log(query)
                 MySQL.ejecutarQuery(query, (err: any, respuesta: Object[]) => {
                     if (err) {

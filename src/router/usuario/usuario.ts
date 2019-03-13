@@ -112,7 +112,7 @@ usuario.post('/insertar_usuario', restrict, (req: Request, res: Response) => {
     hasher(opts, function (err: Error, pass: String, salt: string, hash: string) {
         if (err) throw err;
         // store the salt & hash in the "db"
-        let query = `INSERT INTO usuario(nombre,apellido_paterno,apellido_materno,rut,genero,username,password,salt,telefono_trabajo,telefono_movil,correo,horas_semanales,nombre_contacto_emergencia,telefono_contacto_emergencia,estado,ref_rol,ref_supervisor) VALUES('${obj.nombre}','${obj.apellidoPaterno}','${obj.apellidoMaterno}','${obj.rut}','${obj.genero}','${obj.usuario}','${hash}','${salt}','${obj.telefonoTrabajo}','${obj.telefonoMovil}','${obj.correo}',${obj.horasSemanales},'${obj.nombreContactoEmergencia}','${obj.telefonoContactoEmergencia}',b'${estado}',${obj.rolID},${obj.supervisorID});`;
+        let query = `INSERT INTO usuario(nombre,apellido_paterno,apellido_materno,rut,genero,username,password,salt,color,telefono_trabajo,telefono_movil,correo,horas_semanales,nombre_contacto_emergencia,telefono_contacto_emergencia,estado,ref_rol,ref_supervisor) VALUES('${obj.nombre}','${obj.apellidoPaterno}','${obj.apellidoMaterno}','${obj.rut}','${obj.genero}','${obj.usuario}','${hash}','${salt}','${obj.color}','${obj.telefonoTrabajo}','${obj.telefonoMovil}','${obj.correo}',${obj.horasSemanales},'${obj.nombreContactoEmergencia}','${obj.telefonoContactoEmergencia}',b'${estado}',${obj.rolID},${obj.supervisorID});`;
         console.log(query)
         MySQL.ejecutarQuery(query, (err: any, respuesta: Object[]) => {
             if (err) {
