@@ -16,7 +16,6 @@ paciente.get('/listaPacientes', restrict,(req: Request, res: Response) => {
                 error: err
             });
         } else {
-            console.log(pacientes);
             res.json({
                 ok: true,
                 pacientes
@@ -39,7 +38,6 @@ paciente.get('/busquedaPacientes', restrict,(req: Request, res: Response) => {
                 error: err
             });
         } else {
-            console.log(pacientes);
             res.json({
                 ok: true,
                 pacientes
