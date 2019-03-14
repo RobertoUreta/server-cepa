@@ -24,7 +24,7 @@ evPsicologica.put('/update_evPsicologica', restrict, (req: Request, res: Respons
     obtenerIdIngreso(idPaciente, (err: any, respuesta: Object[]) => {
         let idIngreso = JSON.parse(JSON.stringify(respuesta)).id_ingreso;
         let query = ` UPDATE entrevista_psicologica SET fecha_entrevista='${body.fechaEntrevista}',
-                                                        genograma='${body.genograma}',ecomapa='${body.ecomapa}',recursos_individuales_familiares='${body.recursosIndividualesFamiliares}',
+                                                        genograma='${body.srcGenograma}',ecomapa='${body.srcEcomapa}',recursos_individuales_familiares='${body.recursosIndividualesFamiliares}',
                                                         impresiones_clinicas='${body.impresionesClinicas}',relaciones_interpersonales='${body.relacionesInterpersonales}',
                                                         relacion_terapeuta='${body.relacionTerapeuta}',diagnostico_nosologico='${body.diagnosticoNosologico}',
                                                         diagnostico_descriptivo='${body.diagnosticoDescriptivo}',motivo_consulta_coconstruido='${body.motivoConsultaCoconstruido}',
