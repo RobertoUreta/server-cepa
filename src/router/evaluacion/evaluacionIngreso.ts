@@ -35,7 +35,7 @@ evIngreso.put('/update_evIngreso', restrict, (req: Request, res: Response) => {
             let element = familiares[index];
             let queryEliminarFamiliar = `DELETE FROM familiar WHERE ref_entrevista=${idIngreso};`;
             let queryFamiliar = `INSERT INTO familiar(nombre,edad,relacion_paciente,ocupacion,ref_entrevista) VALUES ('${element.nombre}',${element.edad},'${element.relacionPaciente}','${element.ocupacion}',${idIngreso});`;
-            query = query +queryEliminarFamiliar+ queryFamiliar;
+            query = query + queryEliminarFamiliar + queryFamiliar;
         }
         console.log('Query:   ', query)
         MySQL.ejecutarQuery(query, (err: any, respuesta: Object[]) => {
@@ -71,28 +71,38 @@ evIngreso.get('/obtener_evIngreso', restrict, (req: Request, res: Response) => {
 
     obtenerIdIngreso(idPaciente, (err: any, respuesta: Object[]) => {
         let idIngreso = JSON.parse(JSON.stringify(respuesta)).id_ingreso;
+        console.log(idIngreso);
         obtenerFamiliares(idIngreso, (err: any, resp: Object[]) => {
-            let familiares = JSON.parse(JSON.stringify(resp));
-            console.log(familiares);
-            const query = `
-                    SELECT * 
-                    FROM entrevista_ingreso
-                    WHERE id_entrevista_ingreso = ${idIngreso}
-                    `
-            MySQL.ejecutarQuery(query, (err: any, respuesta: Object[]) => {
-                if (err) {
-                    res.status(400).json({
-                        ok: false,
-                        error: err
-                    });
-                } else {
-                    res.json({
-                        ok: true,
-                        respuesta,
-                        familiares
-                    });
-                }
-            });
+            if (err) {
+                return res.json({
+                    ok: false,
+                    error: err
+                });
+            }
+            else {
+                let familiares = JSON.parse(JSON.stringify(resp));
+                console.log(familiares);
+                const query = `
+                        SELECT * 
+                        FROM entrevista_ingreso
+                        WHERE id_entrevista_ingreso = ${idIngreso}
+                        `
+                MySQL.ejecutarQuery(query, (err: any, respuesta: Object[]) => {
+                    if (err) {
+                        res.status(400).json({
+                            ok: false,
+                            error: err
+                        });
+                    } else {
+                        res.json({
+                            ok: true,
+                            respuesta,
+                            familiares
+                        });
+                    }
+                });
+            }
+
         });
 
     });

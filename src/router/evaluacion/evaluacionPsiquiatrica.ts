@@ -26,23 +26,23 @@ evPsiquiatrica.put('/update_evPsiquiatrica', restrict, (req: Request, res: Respo
         let query = ` UPDATE entrevista_psiquiatra SET fecha_entrevista='${body.fechaEntrevista}',motivo='${body.motivo}',observacion='${body.observacion}',
                                                         detalle_motivo_paciente='${body.detalleMotivoPaciente}',anamnesis_proxima='${body.anamnesisProxima}',hipotesis_diagnostica_dsm_v='${body.hipotesisDiagnosticaDSMV}',
                                                         impresiones_clinicas='${body.impresionesClinicas}',ref_profesional=${idUsuario} WHERE id_entrevista_ingreso=${idIngreso};
-                        UPDATE anamnesis_remota SET hta=b'${body.hta}',dm=b'${body.dm}',tbc=b'${body.tbc}',
-                                                    epi=b'${body.epi}',tec=b'${body.tec}',p_tiroideos=b'${body.pTiroideos}',
-                                                    alergias=b'${body.alergias}',cirugias=b'${body.cirugias}',
-                                                    hospitalizacion=b'${body.hospitalizacion}',accidentes=b'${body.accidentes}',
-                                                    ant_psiquiatrico=b'${body.antPsiquiatricos}',intento_suicida=b'${body.intentosSuicidas}',
+                        UPDATE anamnesis_remota SET hta=${body.hta},dm=${body.dm},tbc=${body.tbc},
+                                                    epi=${body.epi},tec=${body.tec},p_tiroideos=${body.pTiroideos},
+                                                    alergias=${body.alergias},cirugias=${body.cirugias},
+                                                    hospitalizacion=${body.hospitalizacion},accidentes=${body.accidentes},
+                                                    ant_psiquiatrico=${body.antPsiquiatricos},intento_suicida=${body.intentosSuicidas},
                                                     observaciones='${body.observacionesAnamnesisRemota}' WHERE id_anamnesis_remota=${idIngreso};
-                        UPDATE ant_gineco_obstetricos SET menarquia=b'${body.menarquia}',menopausia=b'${body.menopausia}',
-                                                            gpa=b'${body.gpa}',ets=b'${body.ets}',fur=b'${body.fur}',
-                                                            tipo=b'${body.tipo}',observaciones='${body.observacionesAntGinecoObstetricos}' WHERE id_ant_gin_obs=${idIngreso};
-                        UPDATE habitos SET oh=b'${body.oh}',thc=b'${body.thc}',tabaco=b'${body.tabaco}',
-                                            alucinogeno=b'${body.alucinogeno}',anorexigeno=b'${body.anorexigeno}',estimulante=b'${body.estimulante}',
-                                            solvente=b'${body.solvente}',otro='${body.otro}',
+                        UPDATE ant_gineco_obstetricos SET menarquia=${body.menarquia},menopausia=${body.menopausia},
+                                                            gpa=${body.gpa},ets=${body.ets},fur=${body.fur},
+                                                            tipo=${body.tipo},observaciones='${body.observacionesAntGinecoObstetricos}' WHERE id_ant_gin_obs=${idIngreso};
+                        UPDATE habitos SET oh=${body.oh},thc=${body.thc},tabaco=${body.tabaco},
+                                            alucinogeno=${body.alucinogeno},anorexigeno=${body.anorexigeno},estimulante=${body.estimulante},
+                                            solvente=${body.solvente},otro='${body.otro}',
                                             observaciones='${body.observacionesHabitos}' WHERE id_habitos=${idIngreso};
-                        UPDATE ent_psiq_antecedente_familiar SET medicos='${body.medicos}',psquiatricos='${body.psquiatricos}',
+                        UPDATE ent_psiq_antecedente_familiar SET medicos='${body.medicos}',psquiatricos='${body.psiquiatricos}',
                                                                     depresion='${body.depresion}',oh_drogas='${body.ohDrogas}',
                                                                     suicidios='${body.suicidios}',homicidios='${body.homicidios}',
-                                                                    otros='${body.otrosAntecedentesFamiliares}' WHERE id_antec_familiar=${idIngreso};
+                                                                    otros='${body.otrosAntecedesFamiliares}' WHERE id_antec_familiar=${idIngreso};
                         UPDATE indicaciones_plan_tratamiento SET farmacos='${body.farmacos}',entrevista_significantes_afectivos='${body.entrevistaSignificantesAfectivos}',
                                                                     examenes_laboratorio='${body.examenesLaboratorio}',derivacion='${body.derivacion}',
                                                                     coordinacion_psicoterapeuta='${body.coordinacionPsicoterapeuta}',coordinacion_centro_derivacion='${body.coordinacionCentroDerivacion}',
@@ -85,6 +85,7 @@ evPsiquiatrica.get('/obtener_evPsiquiatrica', restrict, (req: Request, res: Resp
                     error: err
                 });
             } else {
+                console.log(respuesta);
                 res.json({
                     ok: true,
                     respuesta

@@ -40,7 +40,7 @@ ingreso.post('/insertarPaciente', restrict, (req: Request, res: Response) => {
         `,"default", "default", "default",  "default",` +
         ` "default", "default",${id},${id},${id});`
 
-    const insertIngreso = `INSERT INTO ingreso (fecha_ingreso,es_reingreso,ref_paciente) VALUES("${body.fechaIngreso}", b'0',${id}); `
+    const insertIngreso = `INSERT INTO ingreso (fecha_ingreso,es_reingreso,ref_paciente) VALUES("${body.fechaIngreso}", 0,${id}); `
 
     const query = insertDatosGenerales + insertDatosAdicionales + insertDatosSocioDemo
     const queryPaciente = query + insertPaciente + valuesPaciente + insertIngreso
@@ -64,11 +64,11 @@ ingreso.post('/insertarPaciente', restrict, (req: Request, res: Response) => {
                 let queryEvPsicologica = ` INSERT INTO entrevista_psicologica(id_entrevista_psicologica, fecha_entrevista, genograma, ecomapa, recursos_individuales_familiares, impresiones_clinicas, relaciones_interpersonales, relacion_terapeuta, diagnostico_nosologico, diagnostico_descriptivo, motivo_consulta_coconstruido, observaciones) 
                                                                     VALUES (${idIngreso},'0000-00-00','default','default','default','default','default','default','default','default','default','default');`
                 let queryEntrevistaPsiquiatra = ` INSERT INTO anamnesis_remota(id_anamnesis_remota,hta,dm,tbc,epi,tec,p_tiroideos,alergias,cirugias,hospitalizacion,accidentes,ant_psiquiatrico,intento_suicida,observaciones) 
-                                                    VALUES (${idIngreso},b'0',b'0',b'0',b'0',b'0',b'0',b'0',b'0',b'0',b'0',b'0',b'0','default');
+                                                    VALUES (${idIngreso},0,0,0,0,0,0,0,0,0,0,0,0,'default');
                                                     INSERT INTO ant_gineco_obstetricos(id_ant_gin_obs,menarquia,menopausia,gpa,ets,fur,tipo,observaciones) 
-                                                    VALUES (${idIngreso},b'0',b'0',b'0',b'0',b'0',b'0','default');
+                                                    VALUES (${idIngreso},0,0,0,0,0,0,'default');
                                                     INSERT INTO habitos(id_habitos,oh,thc,tabaco,alucinogeno,anorexigeno,estimulante,solvente,otro,observaciones) 
-                                                    VALUES (${idIngreso},b'0',b'0',b'0',b'0',b'0',b'0',b'0','default','default');
+                                                    VALUES (${idIngreso},0,0,0,0,0,0,0,'default','default');
                                                     INSERT INTO ent_psiq_antecedente_familiar(id_antec_familiar,medicos,psquiatricos,depresion,oh_drogas,suicidios,homicidios,otros)
                                                     VALUES (${idIngreso},'default','default','default','default','default','default','default');
                                                     INSERT INTO indicaciones_plan_tratamiento(id_indic_plan_trat,farmacos,entrevista_significantes_afectivos,examenes_laboratorio,derivacion,coordinacion_psicoterapeuta,coordinacion_centro_derivacion,instrumentos_aplicar,cuidado_familiar,proximo_control,observaciones) 
