@@ -75,8 +75,16 @@ ingreso.post('/insertarPaciente', restrict, (req: Request, res: Response) => {
                                                     VALUES (${idIngreso},'default','default','default','default','default','default','default','default','default','default');
                                                     INSERT INTO entrevista_psiquiatra(id_entrevista_ingreso,fecha_entrevista,motivo,observacion,detalle_motivo_paciente,anamnesis_proxima,hipotesis_diagnostica_dsm_v,impresiones_clinicas,ref_anamnesis_remota,ref_ant_gineco_obstetricos,ref_habitos,ref_antecedentes_familiares,ref_ind_plan_tratamiento,ref_profesional) 
                                                     VALUES (${idIngreso},'0000-00-00','default','default','default','default','default','default',${idIngreso},${idIngreso},${idIngreso},${idIngreso},${idIngreso},${userId});`;
-                let queryUpdate = ` UPDATE ingreso SET ref_tamizaje=${idIngreso},ref_entrevista_ingreso=${idIngreso},ref_entrevista_psicologica=${idIngreso},ref_entrevista_psiquiatrica=${idIngreso} WHERE id_ingreso=${idIngreso};`
-                let query = queryTamizaje + queryEvIngreso + queryEvPsicologica + queryEntrevistaPsiquiatra + queryUpdate;
+                let queryTratamientoPsicologico = ` INSERT INTO tratamiento_psicologico(id_tratamiento_psicologico, motivo_tratamiento_psicologico, motivo_consulta_coconstruido, tipo_tratamiento, es_interconsulta) 
+                                                    VALUES (${idIngreso},'default','default','default',0);`;
+                let queryTratamientoPsiquiatrico = ` INSERT INTO tratamiento_psiquiatrico(id_tratamiento_psiquiatrico, motivo_consulta_psiquiatrica, motivo_consulta_coconstruido, tipo_tratamiento) 
+                                                    VALUES (${idIngreso},'default','default','default');`;
+                let queryDiagnosticoPsicologico = `  INSERT INTO diagnostico_psicologico(id_diagnostico_psicologico, diagnostico, subtrastorno, tipo_episodio, otro_tipo_especificacion, modalidad_tratamiento, modelo_terapeutico, otro_modelo_terapeutico, traspaso_modalidad_tratamiento, fecha_traspaso_mod_tratamiento, fecha_cierre_psicologico) 
+                                                    VALUES (${idIngreso},'default','default','default','default','default','default','default',0,'0000-00-00','0000-00-00');`;
+                let queryDiagnosticoPsiquiatrico = ` INSERT INTO diagnostico_psiquiatrico(id_diagnostico_psiquiatrico, tratamiento_psiquiatrico, diagnostico_dsm_eje5, etapa_tratamiento, observacion, fecha_cierre_psiquiatra) 
+                                                    VALUES (${idIngreso},'default','default','default','default','0000-00-00');`;
+                let queryUpdate = ` UPDATE ingreso SET ref_tratamiento_psicologico=${idIngreso},ref_tratamiento_psiquiatrico=${idIngreso},ref_diagnostico_psicologico=${idIngreso},ref_diagnostico_psiquiatrico=${idIngreso},ref_tamizaje=${idIngreso},ref_entrevista_ingreso=${idIngreso},ref_entrevista_psicologica=${idIngreso},ref_entrevista_psiquiatrica=${idIngreso} WHERE id_ingreso=${idIngreso};`
+                let query = queryTamizaje + queryEvIngreso + queryEvPsicologica + queryEntrevistaPsiquiatra + queryTratamientoPsicologico + queryTratamientoPsiquiatrico + queryDiagnosticoPsicologico + queryDiagnosticoPsiquiatrico +queryUpdate;
                 console.log(query)
                 MySQL.ejecutarQuery(query, (err: any, respuesta: Object[]) => {
                     if (err) {
