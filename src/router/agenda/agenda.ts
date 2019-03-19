@@ -49,6 +49,7 @@ function obtenerIdIngreso(idPaciente: Number, callback: Function) {
     let query = ` SELECT id_ingreso FROM ingreso WHERE ref_paciente=${idPaciente};`
     MySQL.ejecutarQuery(query, (err: any, respuesta: Object[]) => {
         if (err) {
+            console.log("err", err)
             return callback(err);
         }
         console.log(respuesta);
@@ -57,20 +58,21 @@ function obtenerIdIngreso(idPaciente: Number, callback: Function) {
 }
 
 function obtenerSalaPorDia(ref_sala: Number, fecha_sesion: Number, start: String, end: String, callback: Function) {
-    let query = `SELECT COUNT(*) as cuenta, T1.hora_inicio_atencion
+    let query = `SELECT COUNT(T1.id_sesion) as cuenta
                 FROM (  SELECT id_sesion,hora_inicio_atencion,hora_termino_atencion
                         FROM sesion
                         WHERE ref_sala = ${ref_sala} AND fecha_sesion = DATE("${fecha_sesion}")) as T1
                 WHERE "${start}" >= T1.hora_inicio_atencion AND "${start}" < T1.hora_termino_atencion 
                         OR "${end}" >= T1.hora_inicio_atencion AND "${end}" < T1.hora_termino_atencion 
                         OR "${start}" < T1.hora_inicio_atencion AND "${end}" > T1.hora_termino_atencion
+                GROUP BY T1.id_sesion;
                `
     console.log(query)
     MySQL.ejecutarQuery(query, (err: any, respuesta: Object[]) => {
         if (err) {
             return callback(err);
         }
-
+        console.log("aqui repuesta", respuesta)
         return callback(null, respuesta);
     });
 }
@@ -82,7 +84,7 @@ agenda.post('/insertarSesion', restrict, (req: Request, res: Response) => {
     console.log(body.startAux)
     let inicio = `"${body.startAux}"`
     let final = `"${body.endAux}"`
-    console.log("inicio",inicio,"final",final)
+    console.log("inicio", inicio, "final", final)
     if (inicio > final) {
         console.log("me fui a la chucha, no ejecuté la query")
         res.json({
@@ -90,6 +92,7 @@ agenda.post('/insertarSesion', restrict, (req: Request, res: Response) => {
         })
     } else {
         obtenerSalaPorDia(body.ref_sala, body.fecha_sesion, body.startAux, body.endAux, (err: any, respuesta: Object[]) => {
+            console.log("respuesta", respuesta)
             if (respuesta !== undefined) {
                 respuesta.forEach(element => {
                     console.log(element)
@@ -127,6 +130,31 @@ agenda.post('/insertarSesion', restrict, (req: Request, res: Response) => {
 
                     }
                 })
+            } else {
+                obtenerIdIngreso(body.ref_paciente, (err: any, respuesta: Object[]) => {
+                    console.log("bodyrefpaciente", body.ref_paciente)
+                    let idIngreso = JSON.parse(JSON.stringify(respuesta)).id_ingreso;
+                    console.log("idIngreso", idIngreso)
+                    const query = `INSERT INTO sesion(fecha_sesion,hora_inicio_atencion,hora_termino_atencion,
+                        descripcion_sesion,valor_sesion,tipo_sesion,estado_sesion,ref_usuario,ref_ingreso,ref_sala)
+                        VALUES("${body.fecha_sesion}","${body.startAux}", "${body.endAux}", "${body.descripcion_sesion}",
+                        "${body.valor_sesion}","${body.tipo_sesion}","${body.estado_sesion}",${body.ref_usuario},${idIngreso},${body.ref_sala})`
+                    MySQL.ejecutarQuery(query, (err: any, response: Object[]) => {
+                        if (err) {
+                            res.status(400).json({
+                                ok: false,
+                                error: err
+                            });
+                        } else {
+                            res.json({
+                                ok: true,
+                                response
+                            });
+                        }
+                    })
+
+                })
+
             }
 
         })
@@ -210,7 +238,7 @@ agenda.get('/sesionPorId', (req: Request, res: Response) => {
     let id = req.query.id
     const query = `SELECT T1.*,T2.nombre AS nombre_usuario,T2.apellido_paterno, T2.apellido_materno, T3.nombre as nombre_sala
                 FROM sesion T1,usuario T2 ,sala_atencion T3
-                WHERE T1.id_sesion = ${id} AND t1.ref_usuario = t2.id_usuario AND T3.id_sala = T1.ref_sala
+                WHERE T1.id_sesion = ${id} AND T1.ref_usuario = T2.id_usuario AND T3.id_sala = T1.ref_sala
                 `
     MySQL.ejecutarQuery(query, (err: any, response: Object[]) => {
         if (err) {

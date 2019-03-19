@@ -5,6 +5,7 @@ import express from 'express'
 import session from 'express-session'
 import ingreso from './router/ingreso/ingreso'
 import paciente from './router/paciente/paciente'
+import historial from './router/paciente/historial'
 import sesion from './router/sesion'
 import agenda from './router/agenda/agenda'
 import tamizaje from './router/evaluacion/tamizaje';
@@ -32,6 +33,7 @@ server.app.use(agenda);
 server.app.use(evIngreso);
 server.app.use(evPsicologica);
 server.app.use(evPsiquiatrica);
+server.app.use(historial)
 server.start(()=>{
     console.log('Servidor corriendo en el puerto 3001');
 });
