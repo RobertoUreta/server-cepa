@@ -1,6 +1,7 @@
 import { Router, Request, Response } from "express";
 import MySQL from '../../mysql/mysql';
 import restrict from '../sesion'
+import { request } from "http";
 const agenda = Router();
 
 
@@ -179,7 +180,28 @@ function obtenerRol(ref_user: Number, callback: Function) {
 
 }
 
+agenda.get('/obtenerPacienteSesion', restrict , (req: Request, res: Response)=>{
+    let idSesion = req.query.idSesion
+    let query = `   SELECT T1.nombre,T1.apellido_paterno,T1.apellido_materno
+                    FROM paciente T1, ingreso T2, sesion T3 
+                    WHERE ${idSesion} = T3.id_sesion AND T3.ref_ingreso = T2.id_ingreso 
+                            AND T2.ref_paciente = T1.id_paciente`
 
+    MySQL.ejecutarQuery(query, (err:any , respuesta: Object[]) => {
+        if (err) {
+            res.status(400).json({
+                ok: false,
+                error: err
+            })
+        } else {
+            console.log("amipixularespuesta" , respuesta[0])
+            res.json({
+                ok: true,
+                respuesta: respuesta[0]
+            })
+        }
+    })
+})
 
 agenda.get('/obtenerSesiones', restrict, (req: Request, res: Response) => {
     console.log(req.query)
@@ -191,6 +213,8 @@ agenda.get('/obtenerSesiones', restrict, (req: Request, res: Response) => {
         console.log("rol es", rol)
 
         if (rol === "ADMIN") {
+
+            
             const query = ` 
             SELECT * 
 	        FROM usuario,sesion,sala_atencion
@@ -236,10 +260,13 @@ agenda.get('/obtenerSesiones', restrict, (req: Request, res: Response) => {
 
 agenda.get('/sesionPorId', (req: Request, res: Response) => {
     let id = req.query.id
-    const query = `SELECT T1.*,T2.nombre AS nombre_usuario,T2.apellido_paterno, T2.apellido_materno, T3.nombre as nombre_sala
-                FROM sesion T1,usuario T2 ,sala_atencion T3
-                WHERE T1.id_sesion = ${id} AND T1.ref_usuario = T2.id_usuario AND T3.id_sala = T1.ref_sala
-                `
+    const query = ` SELECT T1.*,T2.nombre AS nombre_usuario,T2.apellido_paterno AS apellidoP_usuario, T2.apellido_materno as apellidoM_usuario
+                    , T3.nombre as nombre_sala, T5.nombre AS nombre_paciente , T5.apellido_paterno AS apellidoP_paciente, T5.apellido_materno AS apellidoM_paciente
+                    FROM sesion T1,usuario T2 ,sala_atencion T3,ingreso T4, paciente T5
+                    WHERE T1.id_sesion = ${id} AND T1.ref_usuario = T2.id_usuario AND T3.id_sala = T1.ref_sala
+                    AND T1.ref_ingreso = T4.id_ingreso AND T4.ref_paciente = T5.id_paciente
+                `   
+    
     MySQL.ejecutarQuery(query, (err: any, response: Object[]) => {
         if (err) {
             res.status(400).json({
