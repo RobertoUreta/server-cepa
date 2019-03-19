@@ -12,6 +12,10 @@ import tamizaje from './router/evaluacion/tamizaje';
 import evIngreso from './router/evaluacion/evaluacionIngreso';
 import evPsicologica from './router/evaluacion/evaluacionPsicologica';
 import evPsiquiatrica from './router/evaluacion/evaluacionPsiquiatrica';
+import tratamientoPsicologico from './router/tratamiento/tratamientoPsicologico';
+import tratamientoPsiquiatrico from './router/tratamiento/tratamientoPsiquiatrico';
+import diagnosticoPsicologico from './router/diagnostico/diagnosticoPsicologico';
+import diagnosticoPsiquiatrico from './router/diagnostico/diagnosticoPsiquiatrico';
 const cors = require('cors')
 const server = Server.init(3001);
 server.app.use(express.urlencoded({ extended: true }));
@@ -33,7 +37,11 @@ server.app.use(agenda);
 server.app.use(evIngreso);
 server.app.use(evPsicologica);
 server.app.use(evPsiquiatrica);
-server.app.use(historial)
+server.app.use(historial);
+server.app.use(tratamientoPsicologico);
+server.app.use(tratamientoPsiquiatrico);
+server.app.use(diagnosticoPsicologico);
+server.app.use(diagnosticoPsiquiatrico);
 server.start(()=>{
     console.log('Servidor corriendo en el puerto 3001');
 });
