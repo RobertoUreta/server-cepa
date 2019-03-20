@@ -73,35 +73,35 @@ evIngreso.get('/obtener_evIngreso', restrict, (req: Request, res: Response) => {
         let idIngreso = JSON.parse(JSON.stringify(respuesta)).id_ingreso;
         console.log(idIngreso);
         obtenerFamiliares(idIngreso, (err: any, resp: Object[]) => {
+            
+            let familiares ="";
             if (err) {
-                return res.json({
-                    ok: false,
-                    error: err
-                });
+                familiares="";
             }
             else {
-                let familiares = JSON.parse(JSON.stringify(resp));
+                familiares = JSON.parse(JSON.stringify(resp));
                 console.log(familiares);
-                const query = `
+            }
+            const query = `
                         SELECT * 
                         FROM entrevista_ingreso
                         WHERE id_entrevista_ingreso = ${idIngreso}
                         `
-                MySQL.ejecutarQuery(query, (err: any, respuesta: Object[]) => {
-                    if (err) {
-                        res.status(400).json({
-                            ok: false,
-                            error: err
-                        });
-                    } else {
-                        res.json({
-                            ok: true,
-                            respuesta,
-                            familiares
-                        });
-                    }
-                });
-            }
+            MySQL.ejecutarQuery(query, (err: any, respuesta: Object[]) => {
+                if (err) {
+                    res.status(400).json({
+                        ok: false,
+                        error: err
+                    });
+                } else {
+                    res.json({
+                        ok: true,
+                        respuesta,
+                        familiares
+                    });
+                }
+            });
+
 
         });
 

@@ -15,6 +15,19 @@ function obtenerIdIngreso(idPaciente: Number, callback: Function) {
     });
 }
 
+
+function obtenerUltimaBateriaEstandar(callback: Function) {
+    let query = `SELECT MAX(id_bateria_estandar) AS id FROM resultados_bateria_estandar`
+    MySQL.ejecutarQuery(query, (err: any, respuesta: Object[]) => {
+        if (err) {
+            return callback(err);
+        }
+        return callback(null, respuesta[0]);
+    });
+}
+
+
+
 ingreso.post('/insertarPaciente', restrict, (req: Request, res: Response) => {
 
     var body = req.body.data
@@ -83,19 +96,39 @@ ingreso.post('/insertarPaciente', restrict, (req: Request, res: Response) => {
                                                     VALUES (${idIngreso},'default','default','default','default','default','default','default',0,'0000-00-00','0000-00-00');`;
                 let queryDiagnosticoPsiquiatrico = ` INSERT INTO diagnostico_psiquiatrico(id_diagnostico_psiquiatrico, tratamiento_psiquiatrico, diagnostico_dsm_eje5, etapa_tratamiento, observacion, fecha_cierre_psiquiatra) 
                                                     VALUES (${idIngreso},'default','default','default','default','0000-00-00');`;
-                let queryUpdate = ` UPDATE ingreso SET ref_tratamiento_psicologico=${idIngreso},ref_tratamiento_psiquiatrico=${idIngreso},ref_diagnostico_psicologico=${idIngreso},ref_diagnostico_psiquiatrico=${idIngreso},ref_tamizaje=${idIngreso},ref_entrevista_ingreso=${idIngreso},ref_entrevista_psicologica=${idIngreso},ref_entrevista_psiquiatrica=${idIngreso} WHERE id_ingreso=${idIngreso};`
-                let query = queryTamizaje + queryEvIngreso + queryEvPsicologica + queryEntrevistaPsiquiatra + queryTratamientoPsicologico + queryTratamientoPsiquiatrico + queryDiagnosticoPsicologico + queryDiagnosticoPsiquiatrico +queryUpdate;
-                console.log(query)
-                MySQL.ejecutarQuery(query, (err: any, respuesta: Object[]) => {
-                    if (err) {
-                        return res.status(500).json({
-                            ok: false,
-                            err
+                let queryBaterias = `INSERT INTO resultados_bateria_estandar(oq_45_2, sclr_90, des, lec, pcl) 
+                                                    VALUES (0,0,0,0,0);
+                                                    INSERT INTO resultados_bateria_estandar(oq_45_2, sclr_90, des, lec, pcl) 
+                                                    VALUES (0,0,0,0,0);
+                                                    INSERT INTO resultados_bateria_estandar(oq_45_2, sclr_90, des, lec, pcl) 
+                                                    VALUES (0,0,0,0,0);`;
+                MySQL.ejecutarQuery(queryBaterias, (err: any, respuesta: Object[]) => {
+                    obtenerUltimaBateriaEstandar((err: any, resp: Object[]) => {                
+                        let aux = JSON.parse(JSON.stringify(resp))
+                        let ultimo = aux.id;
+                        let id1 = ultimo - 2;
+                        let id2 = ultimo - 1;
+                        let id3 = ultimo;
+                        console.log("Este es el ultimo:  ", ultimo);
+                        let queryEpicrisisPsico = ` INSERT INTO test_bateria_estandar(id_test_bateria_estandar, ref_proceso_diagnostico, ref_durante_proceso_interventivo, ref_finalizacion_proceso_terapeutico)
+                                                    VALUES(${idIngreso}, ${id1},${id2}, ${id3});
+                                                    INSERT INTO epicrisis_psicologica(id_epicrisis_psicolgica, fecha_epicrisis, tipo_epicrisis, motivos, observacion_remision_sintomas, nivel_remision, observaciones_finales, logro_alcanzado, puntuacion_observaciones_cgi, ref_test_bateria_estandar)
+                                                    VALUES(${idIngreso}, '0000-00-00', 'default', 'default', 'default', 'default', 'default', 'default', 'default', ${idIngreso});`
+                        let queryUpdate = ` UPDATE ingreso SET ref_tratamiento_psicologico=${idIngreso},ref_tratamiento_psiquiatrico=${idIngreso},ref_epicrisis_psicologica=${idIngreso},ref_diagnostico_psicologico=${idIngreso},ref_diagnostico_psiquiatrico=${idIngreso},ref_tamizaje=${idIngreso},ref_entrevista_ingreso=${idIngreso},ref_entrevista_psicologica=${idIngreso},ref_entrevista_psiquiatrica=${idIngreso} WHERE id_ingreso=${idIngreso};`
+                        let query = queryTamizaje + queryEvIngreso + queryEvPsicologica + queryEntrevistaPsiquiatra + queryTratamientoPsicologico + queryTratamientoPsiquiatrico + queryDiagnosticoPsicologico + queryDiagnosticoPsiquiatrico + queryEpicrisisPsico + queryUpdate;
+                        console.log(query)
+                        MySQL.ejecutarQuery(query, (err: any, respuesta: Object[]) => {
+                            if (err) {
+                                return res.status(500).json({
+                                    ok: false,
+                                    err
+                                });
+                            }
+                            console.log("Se insertó correctamente en la tabla de paciente")
+                            res.json({
+                                ok: true,
+                            });
                         });
-                    }
-                    console.log("Se insertó correctamente en la tabla de paciente")
-                    res.json({
-                        ok: true,
                     });
                 });
             })
@@ -135,7 +168,7 @@ ingreso.put('/update_datosadicionales', restrict, (req: Request, res: Response) 
     var body = req.body.data;
     var id = req.body.id;
 
-    var query = `UPDATE datos_adicionales SET estado = 0 , etapa = "${body.etapa}",` +
+    var query = `UPDATE datos_adicionales SET estado = '${body.estado}' , etapa = "${body.etapa}",` +
         `tipo_ingreso="${body.tipoIngreso}", institucion ="${body.institucion}"` +
         ` WHERE id_datos_adicionales = ${id}`
 
@@ -164,7 +197,7 @@ ingreso.put('/update_datossociodemo', restrict, (req: Request, res: Response) =>
     var query = `UPDATE datos_sociodemograficos SET pais = "${body.pais}",` +
         `region="${body.region}", provincia ="${body.provincia}" , ciudad="${body.ciudad}" ,` +
         `direccion="${body.direccion}",ingreso_familiar =" ${body.ingresoFamiliar}", tipo_familia="${body.tipoFamilia}"` +
-        `,estado_civil =" ${body.estadoCivil}"` +
+        `,estado_civil ="${body.estadoCivil}"` +
         ` WHERE id_datos_sociodemograficos = ${id}`
 
 
@@ -233,5 +266,63 @@ ingreso.get('/obtener_id_paciente', restrict, (req: Request, res: Response) => {
     });
 });
 
+
+ingreso.get('/obtener_adultoContacto', restrict, (req: Request, res: Response) => {
+    let idPaciente = req.query.idPaciente;
+    const query = ` SELECT * FROM adulto_contacto WHERE id_adulto_contacto=${idPaciente};`
+    MySQL.ejecutarQuery(query, (err: any, respuesta: Object[]) => {
+        if (err) {
+            res.status(400).json({
+                ok: false,
+                error: err
+            });
+        } else {
+            console.log(respuesta);
+            res.json({
+                ok: true,
+                respuesta
+            });
+        }
+    });
+})
+
+
+ingreso.get('/obtener_datosSocio', restrict, (req: Request, res: Response) => {
+    let idPaciente = req.query.idPaciente;
+    const query = ` SELECT * FROM datos_sociodemograficos WHERE id_datos_sociodemograficos=${idPaciente};`
+    MySQL.ejecutarQuery(query, (err: any, respuesta: Object[]) => {
+        if (err) {
+            res.status(400).json({
+                ok: false,
+                error: err
+            });
+        } else {
+            console.log(respuesta);
+            res.json({
+                ok: true,
+                respuesta
+            });
+        }
+    });
+})
+
+ingreso.get('/obtener_datosAdicionales', restrict, (req: Request, res: Response) => {
+    let idPaciente = req.query.idPaciente;
+    const query = ` SELECT * FROM datos_adicionales WHERE id_datos_adicionales=${idPaciente};`
+    MySQL.ejecutarQuery(query, (err: any, respuesta: Object[]) => {
+        if (err) {
+            res.status(400).json({
+                ok: false,
+                error: err
+            });
+        } else {
+            console.log(respuesta);
+            res.json({
+                ok: true,
+                respuesta
+            });
+        }
+    });
+})
 
 export default ingreso;
