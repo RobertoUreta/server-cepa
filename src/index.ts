@@ -17,6 +17,8 @@ import tratamientoPsiquiatrico from './router/tratamiento/tratamientoPsiquiatric
 import diagnosticoPsicologico from './router/diagnostico/diagnosticoPsicologico';
 import diagnosticoPsiquiatrico from './router/diagnostico/diagnosticoPsiquiatrico';
 import epicrisisPsicologica from './router/epicrisis/epicrisisPsicologica';
+import epicrisisPsiquiatrica from './router/epicrisis/epicrisisPsiquiatrica';
+import psicologoISL from './router/isl/psicologoISL';
 const cors = require('cors')
 const server = Server.init(3001);
 server.app.use(express.urlencoded({ extended: true }));
@@ -44,6 +46,8 @@ server.app.use(tratamientoPsiquiatrico);
 server.app.use(diagnosticoPsicologico);
 server.app.use(diagnosticoPsiquiatrico);
 server.app.use(epicrisisPsicologica);
+server.app.use(epicrisisPsiquiatrica);
+server.app.use(psicologoISL);
 server.start(()=>{
     console.log('Servidor corriendo en el puerto 3001');
 });

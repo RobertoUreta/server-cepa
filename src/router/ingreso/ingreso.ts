@@ -26,6 +26,40 @@ function obtenerUltimaBateriaEstandar(callback: Function) {
     });
 }
 
+function obtenerQueryISL(idIngreso: Number, callback: Function) {
+    let query = ` INSERT INTO diagnostico_dsm( eje_1, eje_2, eje_3, eje_4, eeg, impresiones_clinicas) 
+                VALUES ('default','default','default','default','default','default');`
+    MySQL.ejecutarQuery(query, (err: any, respuesta1: Object[]) => {
+        if (err) {
+            console.log("errrrrorrrs");
+            return callback(err);
+        }
+        let query2=`SELECT MAX(id_dsm) AS id FROM diagnostico_dsm;`;
+        MySQL.ejecutarQuery(query2, (err: any, respuesta: Object[]) => {
+            if (err) {
+                console.log("errrrrorrrs");
+                return callback(err);
+            }
+            let aux = JSON.parse(JSON.stringify(respuesta[0]));
+            console.log("Este es auxxxx: ",aux);
+            let idDSM = aux.id;
+            let query2 = ` INSERT INTO entrevista_psicologo_isl(id_entrevista_psicologo_isl, estado_civil, num_hijos, nombre_empresa, rol_cumple_en_empresa, tiempo_en_profesion, tiempo_en_cargo, funciones_realizadas_en_empresa, descripcion_cargo, horarios, limite_alcance_cargo, calidad_relaciones_interpersonales, liderazgo, caracteristicas_jefatura, tipo_contrato, estabilidad, cambio_funciones, obligaciones_extra_contrato, menoscabo_funciones, medidas_proteccion_trabajador_efectividad, motivaciones_diep, sintomas, cuando_aparecen, cuando_intensifican, que_hace_al_respecto, lugares_de_trabajo_actuales, antiguedad_en_trabajos, despidos_renuncias_causas, interes_motivaciones_trabajo_actual, genograma, expectativa_trabajador, ref_diagnostico_dsm) 
+                                                VALUES (${idIngreso},'default',0,
+                                                        'default','default','default',
+                                                        'default','default','default',
+                                                        'default','default','default',
+                                                        'default','default','default',
+                                                        'default','default','default',
+                                                        'default','default','default',
+                                                        'default','default','default',
+                                                        'default','default','default',
+                                                        'default','default','default',
+                                                        'default',${idDSM});`;
+            return callback(null, query2);
+        });
+    });
+}
+
 
 
 ingreso.post('/insertarPaciente', restrict, (req: Request, res: Response) => {
@@ -96,6 +130,8 @@ ingreso.post('/insertarPaciente', restrict, (req: Request, res: Response) => {
                                                     VALUES (${idIngreso},'default','default','default','default','default','default','default',0,'0000-00-00','0000-00-00');`;
                 let queryDiagnosticoPsiquiatrico = ` INSERT INTO diagnostico_psiquiatrico(id_diagnostico_psiquiatrico, tratamiento_psiquiatrico, diagnostico_dsm_eje5, etapa_tratamiento, observacion, fecha_cierre_psiquiatra) 
                                                     VALUES (${idIngreso},'default','default','default','default','0000-00-00');`;
+                let queryEpicrisisPsiquiatrica = ` INSERT INTO epicrisis_psiquiatrica(id_epicrisis_psiquiatrica, fecha_epicrisis, tipo_epicrisis, motivos, diagnostico_egreso, indicaciones)
+                                                     VALUES (${idIngreso},'0000-00-00','default','default','default','default');`;
                 let queryBaterias = `INSERT INTO resultados_bateria_estandar(oq_45_2, sclr_90, des, lec, pcl) 
                                                     VALUES (0,0,0,0,0);
                                                     INSERT INTO resultados_bateria_estandar(oq_45_2, sclr_90, des, lec, pcl) 
@@ -103,30 +139,35 @@ ingreso.post('/insertarPaciente', restrict, (req: Request, res: Response) => {
                                                     INSERT INTO resultados_bateria_estandar(oq_45_2, sclr_90, des, lec, pcl) 
                                                     VALUES (0,0,0,0,0);`;
                 MySQL.ejecutarQuery(queryBaterias, (err: any, respuesta: Object[]) => {
-                    obtenerUltimaBateriaEstandar((err: any, resp: Object[]) => {                
+                    obtenerUltimaBateriaEstandar((err: any, resp: Object[]) => {
                         let aux = JSON.parse(JSON.stringify(resp))
                         let ultimo = aux.id;
                         let id1 = ultimo - 2;
                         let id2 = ultimo - 1;
                         let id3 = ultimo;
-                        console.log("Este es el ultimo:  ", ultimo);
                         let queryEpicrisisPsico = ` INSERT INTO test_bateria_estandar(id_test_bateria_estandar, ref_proceso_diagnostico, ref_durante_proceso_interventivo, ref_finalizacion_proceso_terapeutico)
                                                     VALUES(${idIngreso}, ${id1},${id2}, ${id3});
                                                     INSERT INTO epicrisis_psicologica(id_epicrisis_psicolgica, fecha_epicrisis, tipo_epicrisis, motivos, observacion_remision_sintomas, nivel_remision, observaciones_finales, logro_alcanzado, puntuacion_observaciones_cgi, ref_test_bateria_estandar)
                                                     VALUES(${idIngreso}, '0000-00-00', 'default', 'default', 'default', 'default', 'default', 'default', 'default', ${idIngreso});`
-                        let queryUpdate = ` UPDATE ingreso SET ref_tratamiento_psicologico=${idIngreso},ref_tratamiento_psiquiatrico=${idIngreso},ref_epicrisis_psicologica=${idIngreso},ref_diagnostico_psicologico=${idIngreso},ref_diagnostico_psiquiatrico=${idIngreso},ref_tamizaje=${idIngreso},ref_entrevista_ingreso=${idIngreso},ref_entrevista_psicologica=${idIngreso},ref_entrevista_psiquiatrica=${idIngreso} WHERE id_ingreso=${idIngreso};`
-                        let query = queryTamizaje + queryEvIngreso + queryEvPsicologica + queryEntrevistaPsiquiatra + queryTratamientoPsicologico + queryTratamientoPsiquiatrico + queryDiagnosticoPsicologico + queryDiagnosticoPsiquiatrico + queryEpicrisisPsico + queryUpdate;
-                        console.log(query)
-                        MySQL.ejecutarQuery(query, (err: any, respuesta: Object[]) => {
-                            if (err) {
-                                return res.status(500).json({
-                                    ok: false,
-                                    err
+                        obtenerQueryISL(idIngreso, (err: any, queryISL: String) => {
+                            console.log(queryISL);
+                            let queryIngresoISL = `INSERT INTO ingreso_isl(id_ingreso_isl, ref_entrevista_psico) 
+                                                                            VALUES (${idIngreso},${idIngreso}); `;
+                            let queryUpdate = ` UPDATE ingreso SET ref_tratamiento_psicologico=${idIngreso},ref_tratamiento_psiquiatrico=${idIngreso},ref_epicrisis_psiquiatrica=${idIngreso},ref_epicrisis_psicologica=${idIngreso},ref_diagnostico_psicologico=${idIngreso},ref_diagnostico_psiquiatrico=${idIngreso},ref_tamizaje=${idIngreso},ref_entrevista_ingreso=${idIngreso},ref_entrevista_psicologica=${idIngreso},ref_entrevista_psiquiatrica=${idIngreso},ref_ingreso_isl=${idIngreso} WHERE id_ingreso=${idIngreso};`
+                            let query = queryTamizaje + queryEvIngreso + queryEvPsicologica + queryEntrevistaPsiquiatra + queryTratamientoPsicologico + queryTratamientoPsiquiatrico + queryDiagnosticoPsicologico + queryDiagnosticoPsiquiatrico + queryEpicrisisPsico + queryEpicrisisPsiquiatrica + queryISL +queryIngresoISL + queryUpdate;
+                            console.log(query)
+                            MySQL.ejecutarQuery(query, (err: any, respuesta: Object[]) => {
+                                if (err) {
+                                    return res.status(500).json({
+                                        ok: false,
+                                        err
+                                    });
+                                }
+                                console.log("Se insertó correctamente en la tabla de paciente")
+                                res.json({
+                                    ok: true,
+                                    respuesta
                                 });
-                            }
-                            console.log("Se insertó correctamente en la tabla de paciente")
-                            res.json({
-                                ok: true,
                             });
                         });
                     });
