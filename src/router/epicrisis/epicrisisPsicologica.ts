@@ -40,7 +40,7 @@ epicrisisPsicologica.put('/update_epicrisisPsicologica', restrict, (req: Request
                                                                     des=${body.des_3},lec=${body.lec_3},
                                                                     pcl=${body.pcl_3} WHERE id_bateria_estandar=${id3};
                             UPDATE epicrisis_psicologica SET fecha_epicrisis='${body.fecha}',tipo_epicrisis='${body.tipoEpicrisis}',
-                                                                motivos='${body.motivos}',observacion_remision_sintomas='${body.observacionRemisisionSintomas}',
+                                                                motivos='${body.motivos}',observacion_remision_sintomas='${body.observacionRemisionSintomas}',
                                                                 nivel_remision='${body.nivelRemision}',observaciones_finales='${body.observacionesFinales}',
                                                                 logro_alcanzado='${body.logroAlcanzado}',puntuacion_observaciones_cgi='${body.puntuacionObservacionesCgi}' 
                                                                 WHERE id_epicrisis_psicolgica=${idIngreso};`;
