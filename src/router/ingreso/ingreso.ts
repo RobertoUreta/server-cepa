@@ -54,7 +54,14 @@ function obtenerQueryISL(idIngreso: Number, callback: Function) {
                                                         'default','default','default',
                                                         'default','default','default',
                                                         'default','default','default',
-                                                        'default',${idDSM});`;
+                                                        'default',${idDSM});                           
+                            INSERT INTO entrevista_medico_isl(id_entrevista_medico_isl, estado_civil, escolaridad, fecha_evaluacion_medica, anamnesis, territorialidad_desplaza_fuera_hogar, patologias_medicas_psiquiatricas_previas, consumo_sustancias, labores_realizadas, difcultades_referidas, apariencia, actitud_inicial, conducta_no_verbal, es_acompanado, oposicionalismo, sospecha_simulacion, sugerencia_test, sugerencia_test_especificar, observaciones, observaciones_generales) 
+                            VALUES (${idIngreso},'default','default',
+                                    '0000-00-00','default','default',
+                                    'default','default','default',
+                                    'default','default','default',
+                                    'default','default',0,0,0,'default',
+                                    'default','default');`;
             return callback(null, query2);
         });
     });
@@ -151,8 +158,8 @@ ingreso.post('/insertarPaciente', restrict, (req: Request, res: Response) => {
                                                     VALUES(${idIngreso}, '0000-00-00', 'default', 'default', 'default', 'default', 'default', 'default', 'default', ${idIngreso});`
                         obtenerQueryISL(idIngreso, (err: any, queryISL: String) => {
                             console.log(queryISL);
-                            let queryIngresoISL = `INSERT INTO ingreso_isl(id_ingreso_isl, ref_entrevista_psico) 
-                                                                            VALUES (${idIngreso},${idIngreso}); `;
+                            let queryIngresoISL = `INSERT INTO ingreso_isl(id_ingreso_isl,ref_entrevista_med, ref_entrevista_psico) 
+                                                                            VALUES (${idIngreso},${idIngreso},${idIngreso}); `;
                             let queryUpdate = ` UPDATE ingreso SET ref_tratamiento_psicologico=${idIngreso},ref_tratamiento_psiquiatrico=${idIngreso},ref_epicrisis_psiquiatrica=${idIngreso},ref_epicrisis_psicologica=${idIngreso},ref_diagnostico_psicologico=${idIngreso},ref_diagnostico_psiquiatrico=${idIngreso},ref_tamizaje=${idIngreso},ref_entrevista_ingreso=${idIngreso},ref_entrevista_psicologica=${idIngreso},ref_entrevista_psiquiatrica=${idIngreso},ref_ingreso_isl=${idIngreso} WHERE id_ingreso=${idIngreso};`
                             let query = queryTamizaje + queryEvIngreso + queryEvPsicologica + queryEntrevistaPsiquiatra + queryTratamientoPsicologico + queryTratamientoPsiquiatrico + queryDiagnosticoPsicologico + queryDiagnosticoPsiquiatrico + queryEpicrisisPsico + queryEpicrisisPsiquiatrica + queryISL +queryIngresoISL + queryUpdate;
                             console.log(query)
