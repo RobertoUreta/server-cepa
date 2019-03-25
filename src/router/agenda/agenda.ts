@@ -509,24 +509,5 @@ agenda.get('/colorUsuario', (req: Request, res: Response) => {
 })
 
 
-agenda.get('/obtenerRegistroPsicologico', (req: Request, res: Response) => {
-    let id = req.query.id;
 
-    let query = `SELECT * FROM registro_sesion_psicologica T1, sesion T2
-                WHERE T2.id_sesion =${id} AND T2.ref_registro_sesion_psicologica = T1.id_registro_sesion_psicologica`
-
-    MySQL.ejecutarQuery(query, (err: any, response: Object[]) => {
-        if (err) {
-            res.status(400).json({
-                ok: false,
-                error: err
-            })
-        } else {
-            res.json({
-                ok: true,
-                response
-            })
-        }
-    })
-})
 export default agenda;
