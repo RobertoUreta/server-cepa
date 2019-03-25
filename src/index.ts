@@ -20,6 +20,8 @@ import epicrisisPsicologica from './router/epicrisis/epicrisisPsicologica';
 import epicrisisPsiquiatrica from './router/epicrisis/epicrisisPsiquiatrica';
 import psicologoISL from './router/isl/psicologoISL';
 import medicoISL from './router/isl/medicoISL';
+import psiquiatraISL from './router/isl/psiquiatraISL';
+import puestoTrabajoISL from './router/isl/puestoTrabajoISL';
 const cors = require('cors')
 const server = Server.init(3001);
 server.app.use(express.urlencoded({ extended: true }));
@@ -50,6 +52,8 @@ server.app.use(epicrisisPsicologica);
 server.app.use(epicrisisPsiquiatrica);
 server.app.use(psicologoISL);
 server.app.use(medicoISL);
+server.app.use(psiquiatraISL);
+server.app.use(puestoTrabajoISL);
 server.start(()=>{
     console.log('Servidor corriendo en el puerto 3001');
 });
