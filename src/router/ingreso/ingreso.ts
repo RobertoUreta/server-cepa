@@ -57,7 +57,7 @@ function obtenerQueryISL(idIngreso: Number, callback: Function) {
                                                         'default',${idDSM});                           
                             INSERT INTO entrevista_medico_isl(id_entrevista_medico_isl, estado_civil, escolaridad, fecha_evaluacion_medica, anamnesis, territorialidad_desplaza_fuera_hogar, patologias_medicas_psiquiatricas_previas, consumo_sustancias, labores_realizadas, difcultades_referidas, apariencia, actitud_inicial, conducta_no_verbal, es_acompanado, oposicionalismo, sospecha_simulacion, sugerencia_test, sugerencia_test_especificar, observaciones, observaciones_generales) 
                             VALUES (${idIngreso},'default','default',
-                                    '0000-00-00','default','default',
+                                    '1900-01-10','default','default',
                                     'default','default','default',
                                     'default','default','default',
                                     'default','default',0,0,0,'default',
@@ -76,7 +76,7 @@ function obtenerQueryISL(idIngreso: Number, callback: Function) {
                                     'default','default','default',
                                     'default','default');
                             INSERT INTO evaluacion_puesto_trabajo(id_ept, fecha_realizacion, opinion_empresa_trabajador, factores_riesgo_empresa, acciones_mitigacion, observaciones, conclusion, razon_social, rut, codigo_ciiu, nombre_centro_trabajo, direccion, descripcion, antiguedad, antiguedad_puesto, eval_desempeno, cambios_pt, ausentismo_enfermedad, jornada_semanal, sistema_turnos, obligacion_control_horarios, colacion, horas_extraordinarias, tipo_remuneracion, vacaciones, medico_solicitante, motivo_consulta, fuente, coordinacion_ept, riesgo_indagar, motivo_falta_testigos,metodo_seleccion, registro_confidencialidad, cargo, descansos, control_tiempo, capacitacion, variedad_tarea, demandas_psicologicas, autonomia_control, ambiguedad, apoyo_social, incorporacion_tec, conflictos_interpersonales, condiciones_hostiles, condiciones_deficientes, condiciones_agravantes, relacion_trabajador_companeros, relacion_superior_jerarquico, relacion_trabajador_suboordinados, relacion_trabajador_usuarios, clima_laboral_general, liderazgo, conductas_acoso_laboral, conductas_acoso_sexual) 
-                            VALUES (${idIngreso},'0000-00-00','default','default',
+                            VALUES (${idIngreso},'1900-01-10','default','default',
                                     'default','default','default','default',
                                     'default','default','default','default',
                                     'default','default','default','default',
@@ -146,11 +146,11 @@ ingreso.post('/insertarPaciente', restrict, (req: Request, res: Response) => {
                 let aux = JSON.parse(JSON.stringify(resp))
                 let idIngreso = aux.resp.id;
                 let queryTamizaje = ` INSERT INTO tamizaje (id_tamizaje, nombre_solicitante, fecha_solicitud, horario_disponible, nivel_urgencia, pregunta_sintomatologia,pregunta_malestar,pregunta_observaciones,ref_profesional) 
-                                        VALUES (${idIngreso}, 'default', 'default', 'default', 'default', 'default', 'default', 'default', ${userId});`
+                                        VALUES (${idIngreso}, 'default', '1900-01-10', 'default', 'default', 'default', 'default', 'default', ${userId});`
                 let queryEvIngreso = ` INSERT INTO entrevista_ingreso(id_entrevista_ingreso, fecha_entrevista, grupo_familiar, observaciones, solicitante, motivo_consulta_paciente, motivo_consulta_institucion, motivo_consulta_familia, soluciones_intensadas_resultados, principal_sintomatologia, tratamiento_previo, consumo_sustancias, impresiones_clinicas, observaciones_finales, ref_profesional)
-                                        VALUES (${idIngreso},'0000-00-00','default','default','default','default','default','default','default','default','default','default','default','default',${userId});`
+                                        VALUES (${idIngreso},'1900-01-10','default','default','default','default','default','default','default','default','default','default','default','default',${userId});`
                 let queryEvPsicologica = ` INSERT INTO entrevista_psicologica(id_entrevista_psicologica, fecha_entrevista, genograma, ecomapa, recursos_individuales_familiares, impresiones_clinicas, relaciones_interpersonales, relacion_terapeuta, diagnostico_nosologico, diagnostico_descriptivo, motivo_consulta_coconstruido, observaciones) 
-                                                                    VALUES (${idIngreso},'0000-00-00','default','default','default','default','default','default','default','default','default','default');`
+                                                                    VALUES (${idIngreso},'1900-01-10','default','default','default','default','default','default','default','default','default','default');`
                 let queryEntrevistaPsiquiatra = ` INSERT INTO anamnesis_remota(id_anamnesis_remota,hta,dm,tbc,epi,tec,p_tiroideos,alergias,cirugias,hospitalizacion,accidentes,ant_psiquiatrico,intento_suicida,observaciones) 
                                                     VALUES (${idIngreso},0,0,0,0,0,0,0,0,0,0,0,0,'default');
                                                     INSERT INTO ant_gineco_obstetricos(id_ant_gin_obs,menarquia,menopausia,gpa,ets,fur,tipo,observaciones) 
@@ -162,17 +162,17 @@ ingreso.post('/insertarPaciente', restrict, (req: Request, res: Response) => {
                                                     INSERT INTO indicaciones_plan_tratamiento(id_indic_plan_trat,farmacos,entrevista_significantes_afectivos,examenes_laboratorio,derivacion,coordinacion_psicoterapeuta,coordinacion_centro_derivacion,instrumentos_aplicar,cuidado_familiar,proximo_control,observaciones) 
                                                     VALUES (${idIngreso},'default','default','default','default','default','default','default','default','default','default');
                                                     INSERT INTO entrevista_psiquiatra(id_entrevista_ingreso,fecha_entrevista,motivo,observacion,detalle_motivo_paciente,anamnesis_proxima,hipotesis_diagnostica_dsm_v,impresiones_clinicas,ref_anamnesis_remota,ref_ant_gineco_obstetricos,ref_habitos,ref_antecedentes_familiares,ref_ind_plan_tratamiento,ref_profesional) 
-                                                    VALUES (${idIngreso},'0000-00-00','default','default','default','default','default','default',${idIngreso},${idIngreso},${idIngreso},${idIngreso},${idIngreso},${userId});`;
+                                                    VALUES (${idIngreso},'1900-01-10','default','default','default','default','default','default',${idIngreso},${idIngreso},${idIngreso},${idIngreso},${idIngreso},${userId});`;
                 let queryTratamientoPsicologico = ` INSERT INTO tratamiento_psicologico(id_tratamiento_psicologico, motivo_tratamiento_psicologico, motivo_consulta_coconstruido, tipo_tratamiento, es_interconsulta) 
                                                     VALUES (${idIngreso},'default','default','default',0);`;
                 let queryTratamientoPsiquiatrico = ` INSERT INTO tratamiento_psiquiatrico(id_tratamiento_psiquiatrico, motivo_consulta_psiquiatrica, motivo_consulta_coconstruido, tipo_tratamiento) 
                                                     VALUES (${idIngreso},'default','default','default');`;
                 let queryDiagnosticoPsicologico = `  INSERT INTO diagnostico_psicologico(id_diagnostico_psicologico, diagnostico, subtrastorno, tipo_episodio, otro_tipo_especificacion, modalidad_tratamiento, modelo_terapeutico, otro_modelo_terapeutico, traspaso_modalidad_tratamiento, fecha_traspaso_mod_tratamiento, fecha_cierre_psicologico) 
-                                                    VALUES (${idIngreso},'default','default','default','default','default','default','default',0,'0000-00-00','0000-00-00');`;
+                                                    VALUES (${idIngreso},'default','default','default','default','default','default','default',0,'1900-01-10','1900-01-10');`;
                 let queryDiagnosticoPsiquiatrico = ` INSERT INTO diagnostico_psiquiatrico(id_diagnostico_psiquiatrico, tratamiento_psiquiatrico, diagnostico_dsm_eje5, etapa_tratamiento, observacion, fecha_cierre_psiquiatra) 
-                                                    VALUES (${idIngreso},'default','default','default','default','0000-00-00');`;
+                                                    VALUES (${idIngreso},'default','default','default','default','1900-01-10');`;
                 let queryEpicrisisPsiquiatrica = ` INSERT INTO epicrisis_psiquiatrica(id_epicrisis_psiquiatrica, fecha_epicrisis, tipo_epicrisis, motivos, diagnostico_egreso, indicaciones)
-                                                     VALUES (${idIngreso},'0000-00-00','default','default','default','default');`;
+                                                     VALUES (${idIngreso},'1900-01-10','default','default','default','default');`;
                 let queryBaterias = `INSERT INTO resultados_bateria_estandar(oq_45_2, sclr_90, des, lec, pcl) 
                                                     VALUES (0,0,0,0,0);
                                                     INSERT INTO resultados_bateria_estandar(oq_45_2, sclr_90, des, lec, pcl) 
@@ -189,7 +189,7 @@ ingreso.post('/insertarPaciente', restrict, (req: Request, res: Response) => {
                         let queryEpicrisisPsico = ` INSERT INTO test_bateria_estandar(id_test_bateria_estandar, ref_proceso_diagnostico, ref_durante_proceso_interventivo, ref_finalizacion_proceso_terapeutico)
                                                     VALUES(${idIngreso}, ${id1},${id2}, ${id3});
                                                     INSERT INTO epicrisis_psicologica(id_epicrisis_psicolgica, fecha_epicrisis, tipo_epicrisis, motivos, observacion_remision_sintomas, nivel_remision, observaciones_finales, logro_alcanzado, puntuacion_observaciones_cgi, ref_test_bateria_estandar)
-                                                    VALUES(${idIngreso}, '0000-00-00', 'default', 'default', 'default', 'default', 'default', 'default', 'default', ${idIngreso});`
+                                                    VALUES(${idIngreso}, '1900-01-10', 'default', 'default', 'default', 'default', 'default', 'default', 'default', ${idIngreso});`
                         obtenerQueryISL(idIngreso, (err: any, queryISL: String) => {
                             console.log(queryISL);
                             let queryIngresoISL = `INSERT INTO ingreso_isl(id_ingreso_isl,ref_entrevista_med, ref_entrevista_psico,ref_entrevista_psiq,ref_ept) 
