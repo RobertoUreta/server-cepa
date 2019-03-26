@@ -7,6 +7,7 @@ import ingreso from './router/ingreso/ingreso'
 import paciente from './router/paciente/paciente'
 import historial from './router/paciente/historial'
 import sesion from './router/sesion'
+import archivo from './router/archivo'
 import agenda from './router/agenda/agenda'
 import tamizaje from './router/evaluacion/tamizaje';
 import evIngreso from './router/evaluacion/evaluacionIngreso';
@@ -22,6 +23,7 @@ import psicologoISL from './router/isl/psicologoISL';
 import medicoISL from './router/isl/medicoISL';
 import psiquiatraISL from './router/isl/psiquiatraISL';
 import puestoTrabajoISL from './router/isl/puestoTrabajoISL';
+import fileUpload from 'express-fileupload';
 const cors = require('cors')
 const server = Server.init(3001);
 server.app.use(express.urlencoded({ extended: true }));
@@ -34,6 +36,7 @@ server.app.use(session({
     secret:'123456',
     saveUninitialized:true,
     resave:true}));
+//server.app.use(fileUpload);
 server.app.use(usuario);
 server.app.use(ingreso);
 server.app.use(paciente);
@@ -54,6 +57,7 @@ server.app.use(psicologoISL);
 server.app.use(medicoISL);
 server.app.use(psiquiatraISL);
 server.app.use(puestoTrabajoISL);
+server.app.use(archivo);
 server.start(()=>{
     console.log('Servidor corriendo en el puerto 3001');
 });
