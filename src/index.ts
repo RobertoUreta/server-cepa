@@ -23,7 +23,6 @@ import psicologoISL from './router/isl/psicologoISL';
 import medicoISL from './router/isl/medicoISL';
 import psiquiatraISL from './router/isl/psiquiatraISL';
 import puestoTrabajoISL from './router/isl/puestoTrabajoISL';
-import fileUpload from 'express-fileupload';
 const cors = require('cors')
 const server = Server.init(3001);
 server.app.use(express.urlencoded({ extended: true }));
@@ -36,7 +35,6 @@ server.app.use(session({
     secret:'123456',
     saveUninitialized:true,
     resave:true}));
-//server.app.use(fileUpload);
 server.app.use(usuario);
 server.app.use(ingreso);
 server.app.use(paciente);
