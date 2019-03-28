@@ -1,20 +1,10 @@
 import { Router, Request, Response } from "express";
 import MySQL from '../../mysql/mysql';
 import restrict from '../sesion'
+import {obtenerIdIngreso} from '../ingreso/funciones'
 const evPsicologica = Router();
 
 
-
-function obtenerIdIngreso(idPaciente: Number, callback: Function) {
-    let query = ` SELECT id_ingreso FROM ingreso WHERE ref_paciente=${idPaciente};`
-    MySQL.ejecutarQuery(query, (err: any, respuesta: Object[]) => {
-        if (err) {
-            return callback(err);
-        }
-        console.log(respuesta);
-        return callback(null, respuesta[0]);
-    });
-}
 
 evPsicologica.put('/update_evPsicologica', restrict, (req: Request, res: Response) => {
 
