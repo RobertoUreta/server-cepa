@@ -137,11 +137,36 @@ usuario.get('/listaUsuario', restrict, (req: Request, res: Response) => {
         }
     });
 });
+
 usuario.get('/rol_usuario', restrict, (req: Request, res: Response) => {
     console.log();
     const query = `
         SELECT id_rol_usuario, nombre_rol
         FROM rol_usuario
+    `;
+    MySQL.ejecutarQuery(query, (err: any, roles: Object[]) => {
+        if (err) {
+            res.status(400).json({
+                ok: false,
+                error: err
+            });
+        } else {
+            console.log(roles)
+            res.json({
+                ok: true,
+                roles
+            });
+        }
+    });
+});
+
+usuario.get('/rol_usuarioId', restrict, (req: Request, res: Response) => {
+    console.log();
+    let id = req.query.id;
+    const query = `
+        SELECT T1.id_rol_usuario, T1.nombre_rol
+        FROM rol_usuario T1, usuario T2
+        WHERE T2.id_usuario=${id} AND T2.ref_rol = T1.id_rol_usuario;
     `;
     MySQL.ejecutarQuery(query, (err: any, roles: Object[]) => {
         if (err) {
