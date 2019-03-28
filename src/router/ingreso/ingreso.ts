@@ -225,7 +225,7 @@ ingreso.put('/update_datosPersonales', restrict, (req: Request, res: Response) =
     var update = `UPDATE paciente SET nombre ="${body.nombre}", apellido_paterno="${body.apellidoPaterno}"
     , apellido_materno="${body.apellidoMaterno}", rut = "${body.rut}", fecha_nacimiento="${body.nacimiento}",
     telefono_movil="${body.telefonoMovil}", telefono_fijo="${body.telefonoFijo}", correo= "${body.correo}",
-     establecimiento_educacional="${body.establecimientoEducacional}", tipo_establecimiento="${body.tipoEstablecimiento}",
+     nivel_instruccion="${body.nivelInstruccion}",establecimiento_educacional="${body.establecimientoEducacional}", tipo_establecimiento="${body.tipoEstablecimiento}",
      prevision="${body.prevision}", ocupacion="${body.ocupacion}" , relacion_contractual ="${body.relacionContractual}",
      tipo_paciente="${body.tipoPaciente}", valor_sesion ="${body.valorSesion}" WHERE id_paciente = ${id}   `
 
@@ -387,6 +387,8 @@ ingreso.get('/obtener_datosSocio', restrict, (req: Request, res: Response) => {
         }
     });
 })
+
+
 
 ingreso.get('/obtener_datosAdicionales', restrict, (req: Request, res: Response) => {
     let idPaciente = req.query.idPaciente;
