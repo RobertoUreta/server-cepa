@@ -23,6 +23,7 @@
   },
   "devDependencies": {
     "@types/express": "^4.16.1",
-    "@types/express-session": "^1.15.12"
+    "@types/express-session": "^1.15.12",
+    "typescript": "^3.4.5"
   }
 }
