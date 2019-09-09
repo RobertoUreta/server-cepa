@@ -8,10 +8,10 @@ export default class MySQL{
     constructor(){
         console.log('Clase inicializada');
         this.conexion = mysql.createConnection({
-            host     : 'localhost',
-            user     : 'node_user',
-            password : '123456',
-            database : 'db_cepa',
+            host     : 'dbases2.utalca.cl',
+            user     : 'u_cmrcepa2',
+            password : 'p_CR..19EVv',
+            database : 'db_crmcepa2',
             multipleStatements: true
           });
 
