@@ -32,7 +32,7 @@ server.app.use(cors({
     methods:['GET','POST','PUT'],
     credentials: true}));
 server.app.use(session({
-    secret:'123456',
+    secret:'p_CR..19EVv',
     saveUninitialized:true,
     resave:true}));
 server.app.use(usuario);
